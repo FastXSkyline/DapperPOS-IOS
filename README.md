@@ -29,6 +29,7 @@ AI copilot that understands **Darija / Arabic / French**.
 | `core/` | Shared `schema.sql` (fresh-install schema) |
 | `desktop/` | Electron main (`electron/`) + React/Vite UI (`src/`) + Fastify LAN sync server (`:4000`) |
 | `mobile/` | Expo / React Native companion (cash-only caisse) |
+| `ios/` | iOS home: build & install guide (`README.md`), local `.ipa` drop-zone (`builds/`), download tooling (`tools/`) |
 | `docs/` | `MASTER_PLAN.md` (roadmap), `AI_ASSISTANT.md`, `ALGERIA_REQUIREMENTS.md`, `DESIGN_SYSTEM.md`, `DEPLOYMENT.md` |
 
 ## Develop
