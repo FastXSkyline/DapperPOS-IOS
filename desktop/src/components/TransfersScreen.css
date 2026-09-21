@@ -1,0 +1,383 @@
+/* Transferts entre magasins — Elegance palette (src/styles/tokens.css). */
+
+.trf-screen {
+    padding: 24px 28px 40px;
+    overflow-y: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.trf-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.trf-header h1 {
+    margin: 0;
+    font-size: var(--fs-title1);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-main);
+}
+
+.trf-header p {
+    margin: 6px 0 0;
+    max-width: 70ch;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+}
+
+/* --- Buttons ------------------------------------------------------------ */
+
+.trf-primary,
+.trf-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 16px;
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.trf-primary { border: none; background: var(--accent); color: var(--text-on-accent); }
+.trf-primary:hover:not(:disabled) { background: var(--accent-hover); }
+.trf-ghost { border: 1px solid var(--border-light); background: var(--surface); color: var(--text-main); }
+.trf-ghost:hover:not(:disabled) { background: var(--surface-hover); }
+.trf-primary:disabled, .trf-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.trf-icon {
+    display: inline-flex;
+    padding: 5px;
+    border: none;
+    background: none;
+    border-radius: var(--r-xs);
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.trf-icon:hover { background: var(--surface-hover); color: var(--text-main); }
+
+.trf-link {
+    border: none;
+    background: none;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+}
+
+.trf-link:hover { text-decoration: underline; }
+
+/* --- Banners ------------------------------------------------------------ */
+
+.trf-notice,
+.trf-error,
+.trf-hint {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 14px;
+    border-radius: var(--r-sm);
+    font-size: var(--fs-small);
+}
+
+.trf-notice { background: var(--success-soft); border: 1px solid var(--success); color: var(--success); font-weight: 600; }
+.trf-notice button { margin-left: auto; border: none; background: none; color: inherit; cursor: pointer; display: inline-flex; }
+.trf-error { background: var(--error-soft); border: 1px solid var(--error); color: var(--error); font-weight: 500; }
+.trf-hint { background: var(--warning-soft); color: var(--text-main); line-height: 1.45; }
+.trf-hint svg { color: var(--warning); flex-shrink: 0; }
+
+/* --- Panels ------------------------------------------------------------- */
+
+.trf-panel,
+.trf-transit {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+}
+
+/* In transit is a warning surface, not a neutral one: every row here is stock the
+   business currently cannot find in either shop. */
+.trf-transit {
+    border-color: var(--warning);
+    background: var(--warning-soft);
+}
+
+.trf-transit h2,
+.trf-panel h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: var(--fs-headline);
+    color: var(--text-main);
+}
+
+.trf-transit h2 svg { color: var(--warning); }
+
+.trf-panel-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.trf-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
+    margin-top: 6px;
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+}
+
+/* --- Route + picker ----------------------------------------------------- */
+
+.trf-route {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.trf-route > svg { margin-bottom: 10px; color: var(--text-tertiary); }
+.trf-route label { display: flex; flex-direction: column; gap: 5px; min-width: 170px; }
+.trf-route label.grow { flex: 1; }
+
+.trf-route span {
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.trf-route select,
+.trf-route input {
+    padding: 9px 11px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}
+
+.trf-picker { position: relative; }
+
+.trf-search {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 13px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+.trf-search svg { color: var(--text-tertiary); flex-shrink: 0; }
+
+.trf-search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 10px 0;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}
+
+.trf-search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
+
+.trf-hits {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 4px);
+    left: 0; right: 0;
+    margin: 0; padding: 4px;
+    list-style: none;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    box-shadow: var(--shadow-lg);
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.trf-hits button {
+    display: block;
+    width: 100%;
+    padding: 9px 11px;
+    border: none;
+    background: transparent;
+    border-radius: var(--r-xs);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+    text-align: left;
+    cursor: pointer;
+}
+
+.trf-hits button:hover { background: var(--surface-hover); }
+
+.trf-variants {
+    margin-top: 10px;
+    padding: 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+.trf-variants-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}
+
+.trf-variant-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+}
+
+.trf-variant {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 9px 11px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--text-main);
+    text-align: left;
+    cursor: pointer;
+}
+
+.trf-variant:hover { border-color: var(--accent); background: var(--accent-soft); }
+.trf-variant .muted { font-weight: 500; font-size: var(--fs-caption); color: var(--text-muted); }
+
+/* --- Tables ------------------------------------------------------------- */
+
+.trf-table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
+
+.trf-table th {
+    text-align: left;
+    padding: 9px 12px;
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-tertiary);
+    border-bottom: 1px solid var(--border-light);
+    white-space: nowrap;
+}
+
+.trf-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--separator);
+    color: var(--text-main);
+}
+
+.trf-table tbody tr:last-child td { border-bottom: none; }
+.trf-table tr.active { background: var(--accent-soft); }
+.trf-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.trf-table .muted { color: var(--text-muted); }
+.trf-table .mono { font-variant-numeric: tabular-nums; }
+.trf-table .warn { color: var(--warning); font-weight: 600; }
+
+/* A line that arrived short stays marked, permanently — the discrepancy is the
+   point, and reconciling it away would hide a loss. */
+.trf-table tr.short td { background: var(--error-soft); }
+.trf-table tr.overdue td { font-weight: 600; }
+
+.trf-flag {
+    display: inline-block;
+    margin-left: 7px;
+    padding: 1px 7px;
+    border-radius: var(--r-full);
+    background: var(--error-soft);
+    color: var(--error);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+}
+
+.trf-qty {
+    width: 74px;
+    padding: 6px 8px;
+    text-align: right;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-main);
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-xs);
+}
+
+.trf-qty:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
+.trf-qty:disabled { background: var(--surface-2); cursor: not-allowed; }
+
+/* --- Status badges ------------------------------------------------------ */
+
+.trf-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: var(--r-full);
+    background: var(--bg-deep);
+    color: var(--text-muted);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.trf-badge.approved,
+.trf-badge.prepared { background: var(--accent-soft); color: var(--accent); }
+.trf-badge.shipped { background: var(--warning-soft); color: var(--warning); }
+.trf-badge.received { background: var(--success-soft); color: var(--success); }
+.trf-badge.cancelled { background: var(--error-soft); color: var(--error); }
+
+/* --- Footer ------------------------------------------------------------- */
+
+.trf-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px solid var(--separator);
+}
+
+.trf-actions .muted { color: var(--text-muted); font-size: var(--fs-small); }
+.trf-buttons { display: flex; gap: 9px; margin-left: auto; }
+
+.trf-empty { margin: 0; padding: 16px 0; color: var(--text-muted); font-size: var(--fs-small); }
+
+@media (max-width: 900px) {
+    .trf-screen { padding: 18px 16px 32px; }
+    .trf-panel, .trf-transit { overflow-x: auto; }
+    .trf-table { min-width: 700px; }
+}

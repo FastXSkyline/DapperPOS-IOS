@@ -1,0 +1,274 @@
+/* Journal d'audit — Elegance palette (src/styles/tokens.css). */
+
+.audit-screen {
+    padding: 24px 28px 40px;
+    overflow-y: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.audit-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.audit-header h1 {
+    margin: 0;
+    font-size: var(--fs-title1);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-main);
+}
+
+.audit-header p {
+    margin: 6px 0 0;
+    max-width: 68ch;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+}
+
+.audit-total {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 13px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-main);
+    white-space: nowrap;
+}
+
+.audit-total svg { color: var(--accent); }
+
+/* --- Filters ------------------------------------------------------------ */
+
+.audit-filters {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.audit-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 230px;
+    padding: 0 12px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+.audit-search svg { color: var(--text-tertiary); flex-shrink: 0; }
+
+.audit-search input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 9px 0;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}
+
+.audit-search:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.audit-filters > select {
+    padding: 9px 11px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+    cursor: pointer;
+}
+
+.audit-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 11px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+.audit-date span {
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.audit-date input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}
+
+/* --- Table -------------------------------------------------------------- */
+
+.audit-panel {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+}
+
+.audit-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-small);
+}
+
+.audit-table th {
+    text-align: left;
+    padding: 11px 14px;
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-tertiary);
+    border-bottom: 1px solid var(--border-light);
+    white-space: nowrap;
+}
+
+.audit-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--separator);
+    color: var(--text-main);
+    vertical-align: top;
+}
+
+.audit-table tbody tr {
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out);
+}
+
+.audit-table tbody tr:hover { background: var(--surface-2); }
+.audit-table tbody tr:last-child td { border-bottom: none; }
+.audit-table .muted { color: var(--text-muted); }
+.audit-table .nowrap { white-space: nowrap; }
+
+/* A left rule carries severity, so the row's own colour never competes with the
+   table's readability. Info gets none: most rows are info, and a marker on
+   everything marks nothing. */
+.audit-table tr.sev-warning td:first-child { box-shadow: inset 3px 0 0 var(--warning); }
+.audit-table tr.sev-critical td:first-child { box-shadow: inset 3px 0 0 var(--error); }
+
+.audit-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: var(--r-full);
+    background: var(--bg-deep);
+    color: var(--text-main);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.audit-badge.warning { background: var(--warning-soft); color: var(--warning); }
+.audit-badge.critical { background: var(--error-soft); color: var(--error); }
+
+/* The diff is truncated by default so the table stays scannable, and expands on
+   click for the one row the auditor actually cares about. */
+.audit-table .detail {
+    max-width: 460px;
+    color: var(--text-muted);
+    font-size: var(--fs-footnote);
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.audit-table .detail.full {
+    white-space: normal;
+    overflow: visible;
+    color: var(--text-main);
+    font-variant-numeric: tabular-nums;
+}
+
+/* --- States & pager ----------------------------------------------------- */
+
+.audit-state {
+    padding: 44px 24px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+}
+
+.audit-state.empty { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.audit-state.empty svg { color: var(--text-tertiary); }
+.audit-state.empty h3 { margin: 6px 0 0; font-size: var(--fs-headline); color: var(--text-main); }
+.audit-state.empty p { margin: 0; max-width: 50ch; line-height: 1.5; }
+
+.audit-denied {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    margin: auto;
+    padding: 48px 28px;
+    max-width: 460px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+}
+
+.audit-denied svg { color: var(--text-tertiary); }
+.audit-denied h3 { margin: 4px 0 0; font-size: var(--fs-headline); color: var(--text-main); }
+.audit-denied p { margin: 0; color: var(--text-muted); font-size: var(--fs-small); line-height: 1.5; }
+
+.audit-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+}
+
+.audit-pager button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--text-main);
+    cursor: pointer;
+}
+
+.audit-pager button:hover:not(:disabled) { background: var(--surface-hover); }
+.audit-pager button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+@media (max-width: 900px) {
+    .audit-screen { padding: 18px 16px 32px; }
+    .audit-table { min-width: 820px; }
+}

@@ -1,0 +1,94 @@
+rules_version = '2';
+
+// ---------------------------------------------------------------------------
+// Dapper — Firestore Security Rules
+//
+// These rules ARE the security boundary. The Firebase client config shipped in
+// the desktop and mobile apps is public by design (anyone can read it out of the
+// bundle), so nothing is protected by hiding it. What protects the data is:
+//
+//   1. every request must be authenticated, and
+//   2. a signed-in device may only touch the shop it is assigned to.
+//
+// Deploy with:  firebase deploy --only firestore:rules
+// ---------------------------------------------------------------------------
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Which shop a signed-in user may access. Assign this once per shop account:
+    //   /shop_members/{uid}  ->  { shopId: "<the shop id>", role: "owner" | "employee" }
+    // A device cannot grant itself membership: this collection is readable by its
+    // own user but writable only from the Firebase console / admin SDK.
+    function membership() {
+      return get(/databases/$(database)/documents/shop_members/$(request.auth.uid)).data;
+    }
+
+    function isMemberOf(shopId) {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/shop_members/$(request.auth.uid))
+        && membership().shopId == shopId;
+    }
+
+    function isOwnerOf(shopId) {
+      return isMemberOf(shopId) && membership().role == 'owner';
+    }
+
+    match /shop_members/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false; // console/admin only — never from a client
+    }
+
+    match /shops/{shopId} {
+      allow read: if isMemberOf(shopId);
+      allow write: if isOwnerOf(shopId);
+
+      // Catalogue: the desktop (owner) publishes it, phones only read.
+      // An employee phone can never rewrite prices or stock.
+      match /products/{productId} {
+        allow read: if isMemberOf(shopId);
+        allow write: if isOwnerOf(shopId);
+      }
+      match /variants/{variantId} {
+        allow read: if isMemberOf(shopId);
+        allow write: if isOwnerOf(shopId);
+      }
+      match /suppliers/{supplierId} {
+        allow read: if isMemberOf(shopId);
+        allow write: if isOwnerOf(shopId);
+      }
+
+      // Sales queued by a phone that was off the shop wifi.
+      //
+      // The document id is the transaction_number, which is what makes the relay
+      // idempotent: re-uploading the same sale overwrites its own document rather
+      // than creating a second one.
+      //
+      // A phone may create a sale and read it back, but may NOT delete it and may
+      // not flip `ingested` — only the desktop marks a sale as consumed, after it
+      // has actually landed in SQLite. That way a lost or failed ingest leaves the
+      // sale queued for retry instead of vanishing.
+      match /transactions/{transactionNumber} {
+        allow read: if isMemberOf(shopId);
+
+        allow create: if isMemberOf(shopId)
+                      && request.resource.data.ingested == false
+                      && request.resource.data.transaction_number == transactionNumber;
+
+        // Re-upload of an un-ingested sale (retry) is fine; touching an ingested
+        // one, or setting ingested from a phone, is not.
+        allow update: if (isMemberOf(shopId)
+                          && resource.data.ingested == false
+                          && request.resource.data.ingested == false)
+                      || isOwnerOf(shopId);
+
+        allow delete: if isOwnerOf(shopId);
+      }
+    }
+
+    // Anything not matched above is denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

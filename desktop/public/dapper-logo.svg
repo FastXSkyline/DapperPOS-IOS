@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" width="320" height="64" role="img" aria-label="DAPPER">
+  <title>DAPPER</title>
+  <!-- Wordmark only: no background rect, no fill on the canvas, so the mark drops
+       onto a white receipt, a dark sidebar or a coloured card unchanged.
+       `currentColor` lets the app tint it (sidebar) while print keeps it black. -->
+  <text x="160" y="46"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', Times, 'Nimbus Roman', serif"
+        font-size="46"
+        letter-spacing="3.5"
+        fill="currentColor">DAPPER</text>
+</svg>

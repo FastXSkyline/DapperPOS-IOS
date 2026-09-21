@@ -1,0 +1,293 @@
+/* Inventaire — the health bar, the expandable variant matrix and the movement
+   rail. Everything else comes from styles/elegance.css.
+
+   The state palette is SEMANTIC, taken from the tokens: green/amber/red mean
+   the same thing here as everywhere else in the app, and "dormant" is
+   deliberately NOT a fifth hue — dormant stock is not an alarm, it is capital
+   sitting still, so it reads as neutral grey. */
+
+.inv-back {
+  padding-inline-start: 0;
+  color: var(--text-muted);
+}
+.inv-back:hover { background: transparent; color: var(--accent); }
+
+/* Dormant capital is the one stat that is bad news when it is large. */
+.inv-stat-idle .el-stat-value { color: var(--warning); }
+
+/* ------------------------------------------------------------ health bar --- */
+.inv-health { display: flex; flex-direction: column; }
+
+.inv-bar {
+  display: flex;
+  gap: 3px;
+  height: 12px;
+  margin-bottom: 14px;
+}
+.inv-bar-seg {
+  border: none;
+  padding: 0;
+  min-width: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.inv-bar-seg:hover { transform: scaleY(1.25); }
+.inv-bar-seg:focus-visible { outline: 2px solid var(--accent-ring); outline-offset: 2px; }
+/* A filtered-out segment fades rather than disappearing: the bar must keep
+   showing the whole shop even while the table below shows one slice of it. */
+.inv-bar-seg.is-dim { opacity: 0.22; }
+
+.inv-bar-seg.is-ok { background: var(--success); }
+.inv-bar-seg.is-warn { background: var(--warning); }
+.inv-bar-seg.is-bad { background: var(--error); }
+.inv-bar-seg.is-idle { background: var(--text-tertiary); }
+
+.inv-legend {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Legend AND filter. A tab can only say "Rupture"; this says "Rupture, 24
+   lines, 3 % of the shop" and filters when you press it. */
+.inv-legend-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--fs-small);
+  transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.inv-legend-chip:hover { background: var(--surface-hover); }
+.inv-legend-chip:focus-visible { outline: 2px solid var(--accent-ring); outline-offset: 1px; }
+.inv-legend-chip.is-on { border-color: var(--accent); background: var(--accent-soft); }
+
+.inv-legend-chip > i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  align-self: center;
+}
+.inv-legend-chip > span { color: var(--text-muted); font-weight: 600; }
+.inv-legend-chip > strong {
+  color: var(--text-main);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.inv-legend-chip > small { color: var(--text-tertiary); font-size: var(--fs-footnote); font-weight: 600; }
+
+.inv-legend-chip.is-ok > i { background: var(--success); }
+.inv-legend-chip.is-warn > i { background: var(--warning); }
+.inv-legend-chip.is-bad > i { background: var(--error); }
+.inv-legend-chip.is-idle > i { background: var(--text-tertiary); }
+
+/* ----------------------------------------------------------------- body ---- */
+.inv-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 14px;
+  align-items: start;
+}
+/* The rail is a companion, not a requirement: below this width it drops under
+   the table rather than squeezing the size×colour matrix. */
+@media (max-width: 1280px) {
+  .inv-body { grid-template-columns: minmax(0, 1fr); }
+}
+
+.inv-main { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+.inv-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.inv-search { flex: 1 1 240px; min-width: 200px; }
+
+/* ---------------------------------------------------------------- table ---- */
+.inv-col-x { width: 34px; padding-inline-end: 0 !important; }
+
+.inv-chev {
+  color: var(--text-tertiary);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.inv-chev.is-open { transform: rotate(90deg); color: var(--accent); }
+[dir="rtl"] .inv-chev { transform: rotate(180deg); }
+[dir="rtl"] .inv-chev.is-open { transform: rotate(90deg); }
+
+.inv-row td { padding-block: 12px; }
+
+.inv-flagged {
+  margin-inline-start: 8px;
+  font-size: var(--fs-footnote);
+  color: var(--text-tertiary);
+  font-weight: 600;
+}
+
+/* The expanded row must not inherit the hover tint of a normal row — it is a
+   panel, not a record you can click. */
+.inv-expand-row > td {
+  padding: 0;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--separator);
+}
+.el-table tbody tr.inv-expand-row:hover { background: var(--surface-2); }
+
+/* --------------------------------------------------------------- matrix ---- */
+.inv-matrix { padding: 4px 16px 14px 44px; overflow-x: auto; }
+
+.inv-matrix table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-footnote);
+}
+.inv-matrix th {
+  text-align: start;
+  padding: 8px 10px;
+  color: var(--text-tertiary);
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--separator);
+}
+.inv-matrix td {
+  padding: 7px 10px;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--separator);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.inv-matrix tr:last-child td { border-bottom: none; }
+.inv-matrix .num { text-align: end; font-variant-numeric: tabular-nums; }
+.inv-matrix .muted { color: var(--text-muted); }
+.inv-matrix .strong { font-weight: 700; }
+.inv-matrix .mono { font-family: var(--font-mono); font-size: 11px; }
+.inv-matrix .is-zero { color: var(--error); }
+[dir="rtl"] .inv-matrix .num { text-align: start; }
+[dir="rtl"] .inv-matrix { padding: 4px 44px 14px 16px; }
+
+/* Per-line state. A dot plus the row's own numbers — the state name is on the
+   product row above and in the dot's title, so hue is never the only carrier. */
+.inv-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-inline-end: 8px;
+  vertical-align: middle;
+}
+.inv-dot.is-ok { background: var(--success); }
+.inv-dot.is-warn { background: var(--warning); }
+.inv-dot.is-bad { background: var(--error); }
+.inv-dot.is-idle { background: var(--text-tertiary); }
+
+.inv-matrix-actions { display: flex; gap: 4px; justify-content: flex-end; }
+.inv-matrix-actions .el-btn { height: 28px; padding: 0 9px; font-size: var(--fs-footnote); }
+
+/* ----------------------------------------------------------------- rail ---- */
+.inv-rail { position: sticky; top: 72px; }
+
+.inv-moves {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 560px;
+  overflow-y: auto;
+}
+.inv-moves > li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--separator);
+}
+.inv-moves > li:last-child { border-bottom: none; }
+
+.inv-move-qty {
+  flex-shrink: 0;
+  min-width: 40px;
+  text-align: end;
+  font-size: var(--fs-footnote);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  padding-top: 1px;
+}
+.inv-move-qty.is-in { color: var(--success); }
+.inv-move-qty.is-out { color: var(--error); }
+
+.inv-move-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.inv-move-text strong {
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.inv-move-text small {
+  font-size: 11px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inv-move-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  font-weight: 600;
+}
+.inv-move-meta > span { display: inline-flex; align-items: center; gap: 3px; }
+
+.inv-moves-empty {
+  padding: 28px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-small);
+}
+
+/* -------------------------------------------------------------- dialogs ---- */
+.inv-dialog { width: min(500px, 100%); }
+
+.inv-dialog-target {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 11px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-light);
+}
+.inv-dialog-target strong { font-size: var(--fs-callout); font-weight: 700; color: var(--text-main); }
+.inv-dialog-target span { font-size: var(--fs-footnote); color: var(--text-muted); font-weight: 500; }
+
+.inv-dialog-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+/* The consequence of the number just typed, stated before it is committed. */
+.inv-delta {
+  margin: 0 0 14px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  line-height: 1.45;
+}
+.inv-delta.is-in { background: var(--success-soft); color: var(--success); }
+.inv-delta.is-out { background: var(--error-soft); color: var(--error); }

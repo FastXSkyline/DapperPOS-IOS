@@ -1,0 +1,25 @@
+/* Ventes. Layout only — everything visual comes from styles/elegance.css. */
+
+.sales-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* The search grows into whatever the period and store pills leave behind, so the
+   filter row stays one line down to about 1100px. */
+.sales-search { flex: 1 1 240px; min-width: 200px; }
+
+.sales-store {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.sales-store > svg { color: var(--text-tertiary); }
+
+/* The tabs mount whole screens that bring their own page padding, so the
+   container must not add a second helping. */
+.sales-screen > .rr-screen,
+.sales-screen > .returns-screen,
+.sales-screen > .settlement-screen { margin: 0 -28px -32px; }

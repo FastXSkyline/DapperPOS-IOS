@@ -1,0 +1,583 @@
+/* Retours & échanges — Elegance palette (src/styles/tokens.css).
+   Back-office density: information-rich, filterable, no decoration. */
+
+.returns-screen {
+    padding: 24px 28px 40px;
+    overflow-y: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.returns-header h1 {
+    margin: 0;
+    font-size: var(--fs-title1);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-main);
+}
+
+.returns-header p {
+    margin: 6px 0 0;
+    max-width: 62ch;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+}
+
+/* --- Lookup ------------------------------------------------------------- */
+
+.returns-search {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.returns-search-field {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex: 1;
+    max-width: 520px;
+    padding: 0 14px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.returns-search-field:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.returns-search-field svg { color: var(--text-tertiary); flex-shrink: 0; }
+
+.returns-search-field input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 11px 0;
+    font-size: var(--fs-callout);
+    font-family: inherit;
+    color: var(--text-main);
+}
+
+.returns-primary,
+.returns-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border-radius: var(--r-sm);
+    font-size: var(--fs-callout);
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.returns-primary {
+    border: none;
+    background: var(--accent);
+    color: var(--text-on-accent);
+}
+
+.returns-primary:hover:not(:disabled) { background: var(--accent-hover); }
+.returns-primary:active:not(:disabled) { background: var(--accent-press); }
+
+.returns-secondary {
+    border: 1px solid var(--border-light);
+    background: var(--surface);
+    color: var(--text-main);
+}
+
+.returns-secondary:hover:not(:disabled) { background: var(--surface-hover); }
+
+.returns-primary:disabled,
+.returns-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* --- States ------------------------------------------------------------- */
+
+.returns-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    padding: 46px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+    color: var(--text-muted);
+}
+
+.returns-empty svg { color: var(--text-tertiary); }
+.returns-empty h3 { margin: 6px 0 0; font-size: var(--fs-headline); color: var(--text-main); }
+.returns-empty p { margin: 0; max-width: 46ch; font-size: var(--fs-small); line-height: 1.5; }
+
+.returns-success {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 14px 16px;
+    background: var(--success-soft);
+    border: 1px solid var(--success);
+    border-radius: var(--r-md);
+}
+
+.returns-success > svg { color: var(--success); flex-shrink: 0; margin-top: 1px; }
+.returns-success strong { color: var(--success); font-size: var(--fs-callout); }
+.returns-success p { margin: 3px 0 0; font-size: var(--fs-small); color: var(--text-main); }
+
+.returns-dismiss {
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 2px;
+    display: inline-flex;
+}
+
+.returns-error {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 14px;
+    background: var(--error-soft);
+    border: 1px solid var(--error);
+    border-radius: var(--r-sm);
+    color: var(--error);
+    font-size: var(--fs-small);
+    font-weight: 500;
+}
+
+.returns-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 13px;
+    background: var(--warning-soft);
+    border-radius: var(--r-sm);
+    color: var(--text-main);
+    font-size: var(--fs-small);
+    line-height: 1.45;
+}
+
+.returns-note svg { color: var(--warning); flex-shrink: 0; }
+
+/* --- The sale ----------------------------------------------------------- */
+
+.returns-sale {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.returns-sale-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.returns-sale-head h2 {
+    margin: 0;
+    font-size: var(--fs-title3);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-main);
+}
+
+.returns-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin-top: 5px;
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+}
+
+.returns-sale-total { text-align: right; }
+.returns-sale-total span { display: block; font-size: var(--fs-footnote); color: var(--text-muted); }
+.returns-sale-total strong {
+    font-size: var(--fs-title3);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-main);
+}
+
+/* --- Tables ------------------------------------------------------------- */
+
+.returns-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-small);
+}
+
+.returns-table th {
+    text-align: left;
+    padding: 9px 12px;
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-tertiary);
+    border-bottom: 1px solid var(--border-light);
+    white-space: nowrap;
+}
+
+.returns-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--separator);
+    color: var(--text-main);
+    vertical-align: middle;
+}
+
+.returns-table tbody tr:last-child td { border-bottom: none; }
+.returns-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.returns-table .muted { color: var(--text-muted); }
+.returns-table .mono { font-variant-numeric: tabular-nums; }
+
+/* A line with nothing left to return stays visible — the cashier needs to see
+   that it was already handled, not wonder why it vanished. */
+.returns-table tr.exhausted td { opacity: 0.45; }
+
+.returns-qty {
+    width: 68px;
+    padding: 6px 8px;
+    text-align: right;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-main);
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-xs);
+}
+
+.returns-qty:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.returns-qty:disabled { background: var(--surface-2); cursor: not-allowed; }
+
+.returns-condition {
+    padding: 6px 8px;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-xs);
+}
+
+.returns-condition:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* --- Form + actions ----------------------------------------------------- */
+
+.returns-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.returns-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 190px;
+}
+
+.returns-form label.grow { flex: 1; }
+
+.returns-form span {
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.returns-form select,
+.returns-form input {
+    padding: 9px 11px;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+.returns-form select:focus,
+.returns-form input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.returns-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-top: 14px;
+    border-top: 1px solid var(--separator);
+}
+
+.returns-summary { display: flex; align-items: baseline; gap: 12px; }
+.returns-summary span { font-size: var(--fs-small); color: var(--text-muted); }
+.returns-summary strong {
+    font-size: var(--fs-title2);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-main);
+}
+
+.returns-buttons { display: flex; gap: 10px; }
+
+/* --- History ------------------------------------------------------------ */
+
+.returns-history {
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.returns-history h2 {
+    margin: 0 0 12px;
+    font-size: var(--fs-headline);
+    color: var(--text-main);
+}
+
+.returns-history-empty {
+    margin: 0;
+    padding: 18px 0;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+}
+
+.returns-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: var(--r-full);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+}
+
+.returns-badge.refund { background: var(--error-soft); color: var(--error); }
+.returns-badge.exchange { background: var(--accent-soft); color: var(--accent); }
+
+@media (max-width: 900px) {
+    .returns-screen { padding: 18px 16px 32px; }
+    .returns-search { flex-direction: column; align-items: stretch; }
+    .returns-search-field { max-width: none; }
+    /* Wide tables scroll inside themselves rather than pushing the page sideways. */
+    .returns-sale, .returns-history { overflow-x: auto; }
+    .returns-table { min-width: 720px; }
+}
+
+/* --- Refund / exchange mode ---------------------------------------------
+   A segmented control rather than two buttons at the bottom: the choice
+   changes what the rest of the panel means, so it belongs above it.
+   ------------------------------------------------------------------------ */
+
+.returns-mode {
+    display: inline-flex;
+    gap: 4px;
+    padding: 3px;
+    background: var(--bg-deep);
+    border-radius: var(--r-sm);
+    align-self: flex-start;
+}
+
+.returns-mode button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 15px;
+    border: none;
+    background: transparent;
+    border-radius: var(--r-xs);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.returns-mode button.active {
+    background: var(--surface);
+    color: var(--accent);
+    box-shadow: var(--shadow-sm);
+}
+
+/* --- Replacement cart --------------------------------------------------- */
+
+.returns-exchange {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+}
+
+.returns-exchange h3 {
+    margin: 0;
+    font-size: var(--fs-callout);
+    color: var(--text-main);
+}
+
+.returns-picker { position: relative; }
+
+.returns-hits {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 4px;
+    list-style: none;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    box-shadow: var(--shadow-lg);
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.returns-hits button {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 11px;
+    border: none;
+    background: transparent;
+    border-radius: var(--r-xs);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+    text-align: left;
+    cursor: pointer;
+}
+
+.returns-hits button:hover { background: var(--surface-hover); }
+.returns-hits .muted { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+.returns-variants {
+    margin-top: 10px;
+    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+.returns-variants-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}
+
+.returns-variant-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+}
+
+.returns-variant {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 9px 11px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--text-main);
+    text-align: left;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.returns-variant:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+}
+
+/* Out of stock stays visible and disabled rather than hidden — the cashier
+   needs to be able to tell the customer that size exists but is gone. */
+.returns-variant:disabled { opacity: 0.5; cursor: not-allowed; }
+.returns-variant .muted { font-weight: 500; font-size: var(--fs-caption); color: var(--text-muted); }
+.returns-variant .out { font-weight: 600; font-size: var(--fs-caption); color: var(--error); }
+
+.returns-cart-empty {
+    margin: 0;
+    padding: 14px 0;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+}
+
+/* --- The balance -------------------------------------------------------- */
+
+.returns-balance {
+    display: flex;
+    align-items: flex-end;
+    gap: 26px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px solid var(--separator);
+}
+
+.returns-balance > div { display: flex; flex-direction: column; gap: 2px; }
+
+.returns-balance span {
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.returns-balance strong {
+    font-size: var(--fs-title3);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-main);
+}
+
+/* Money leaving the till and money arriving are opposite actions; the cashier
+   must not have to read the label to tell them apart. */
+.returns-balance .pay-out strong { color: var(--error); }
+.returns-balance .take-in strong { color: var(--success); }
+
+.returns-topup { margin-left: auto; }
+
+.returns-topup select {
+    margin-top: 4px;
+    padding: 8px 11px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}

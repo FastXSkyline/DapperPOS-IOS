@@ -1,0 +1,174 @@
+/* ============================================================
+   Elegance — surface materials, states and motion utilities.
+   Opt-in classes + the <Glass> primitive's styles. The palette and shape live
+   in tokens.css; the shell lives in App.css; the reusable screen furniture
+   (page header, stat card, table, chip, segmented control) lives in
+   elegance.css. This file is materials only.
+   ============================================================ */
+
+/* ---- Canvas ----
+   The mockup's ground is a single flat cool grey. There WAS an animated aurora
+   field here (two fixed pseudo-elements, a 26s drift and a 38px blur); it is
+   gone deliberately. Flat white cards read as lifted because of the VALUE step
+   between #FFFFFF and #F5F6FA, and a drifting gradient underneath destroys that
+   step twice a minute — the cards appear to breathe. It also cost a full-screen
+   composited layer on machines that are running a till.
+
+   Nothing else in this file assumed the field existed, and .app-bg stays so the
+   screens that set it keep working. */
+body {
+  background-color: var(--bg-main);
+  position: relative;
+}
+.app-bg { background: transparent; }
+
+/* ---- Base glass material ---- */
+.glass {
+  position: relative;
+  background: var(--lg-regular-bg);
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  border: 1px solid var(--lg-border);
+  box-shadow: var(--lg-highlight), var(--shadow-float);
+  border-radius: var(--r-lg);
+  color: var(--text-main);
+}
+.glass--ultrathin {
+  background: var(--lg-ultrathin-bg);
+  -webkit-backdrop-filter: blur(var(--lg-blur-thin)) saturate(150%);
+  backdrop-filter: blur(var(--lg-blur-thin)) saturate(150%);
+}
+.glass--thin {
+  background: var(--lg-thin-bg);
+  -webkit-backdrop-filter: blur(var(--lg-blur-thin)) saturate(160%);
+  backdrop-filter: blur(var(--lg-blur-thin)) saturate(160%);
+}
+.glass--regular { background: var(--lg-regular-bg); }
+.glass--thick {
+  background: var(--lg-thick-bg);
+  -webkit-backdrop-filter: blur(var(--lg-blur-thick)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur-thick)) saturate(var(--lg-saturate));
+}
+.glass--chrome {
+  background: var(--lg-chrome-bg);
+  -webkit-backdrop-filter: blur(30px) saturate(var(--lg-saturate));
+  backdrop-filter: blur(30px) saturate(var(--lg-saturate));
+}
+
+/* ---- Compositions ---- */
+.glass-card { padding: var(--space-5); border-radius: var(--r-lg); }
+.glass-interactive {
+  cursor: pointer;
+  transition: transform var(--dur) var(--ease-spring), box-shadow var(--dur) var(--ease-out);
+  will-change: transform;
+}
+.glass-interactive:hover { transform: translateY(-3px); box-shadow: var(--lg-highlight), var(--shadow-lg); }
+.glass-interactive:active { transform: scale(0.98); }
+
+/* Specular sheen on the top edge */
+.glass-sheen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 24%);
+}
+
+/* ---- Spatial elevation utilities ---- */
+.elev-1 { box-shadow: var(--shadow-sm); }
+.elev-2 { box-shadow: var(--shadow-md); }
+.elev-3 { box-shadow: var(--shadow-lg); }
+.elev-float { box-shadow: var(--shadow-float); }
+.squircle { border-radius: var(--r-lg); }
+.squircle-xl { border-radius: var(--r-2xl); }
+
+/* Springy pressable for tiles/buttons */
+.pressable { transition: transform var(--dur-fast) var(--ease-spring); will-change: transform; }
+.pressable:active { transform: scale(0.96); }
+.lift { transition: transform var(--dur) var(--ease-spring), box-shadow var(--dur) var(--ease-out); }
+.lift:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+/* Accent gradient text (white-label wordmark, hero numerals) */
+.accent-text {
+  background: var(--accent-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ---- Skeleton shimmer ---- */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--skeleton-base);
+  border-radius: var(--r-sm);
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--skeleton-sheen), transparent);
+  animation: skeleton-sweep 1.4s ease-in-out infinite;
+}
+@keyframes skeleton-sweep { 100% { transform: translateX(100%); } }
+
+/* ---- Empty state ---- */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-10) var(--space-6);
+  text-align: center;
+  color: var(--text-muted);
+}
+.empty-state .empty-icon {
+  width: 64px; height: 64px;
+  display: grid; place-items: center;
+  border-radius: var(--r-xl);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Entrance animation for panels */
+.rise-in { animation: rise-in var(--dur-slow) var(--ease-out) both; }
+@keyframes rise-in { from { opacity: 0; transform: translateY(10px) scale(0.99); } to { opacity: 1; transform: none; } }
+
+/* ---- Fallback: no backdrop-filter → solid tinted surface ---- */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass, .glass--ultrathin, .glass--thin, .glass--regular, .glass--thick, .glass--chrome {
+    background: var(--surface);
+  }
+}
+
+/* ---- Accessibility: Reduce Transparency ---- */
+@media (prefers-reduced-transparency: reduce) {
+  .glass, .glass--ultrathin, .glass--thin, .glass--regular, .glass--thick, .glass--chrome {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--surface);
+  }
+}
+
+/* ---- Accessibility: Reduce Motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  .glass-interactive, .glass-interactive:hover, .glass-interactive:active,
+  .pressable, .pressable:active, .lift, .lift:hover, .rise-in { transition: none; animation: none; transform: none; }
+  .skeleton::after { animation: none; }
+  * { scroll-behavior: auto !important; }
+}
+
+/* ---- Refined scrollbars ---- */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--text-tertiary);
+  border-radius: var(--r-full);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); background-clip: content-box; }

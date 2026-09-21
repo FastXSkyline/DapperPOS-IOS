@@ -1,0 +1,148 @@
+/* ============================================================
+   Network monitor — the shop's live device & data-movement panel.
+   Built on the Elegance furniture (el-*); this file adds the glass
+   surfaces, the online pulse and the accent glow the screen leans on.
+   Nothing hardcodes a hex — every colour is a token, so dark mode and
+   an accent retune both flow through unchanged.
+   ============================================================ */
+
+.nm-page { gap: 16px; }
+
+/* ---- Glass surface ----------------------------------------------------
+   A frosted card: the mockup's white panel, but translucent with a real
+   backdrop blur so the cool ground shows through. Falls back to the solid
+   surface where backdrop-filter is unavailable (see the @supports below). */
+.nm-glass {
+  background: var(--lg-ultrathin-bg);
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  border: 1px solid var(--lg-border);
+  box-shadow: var(--lg-highlight), var(--shadow-sm);
+}
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .nm-glass { background: var(--surface); }
+}
+
+/* ---- Stats row -------------------------------------------------------- */
+.nm-stats { margin-bottom: 2px; }
+.nm-stat-remote { font-size: 21px; }
+
+/* ---- Glow button ------------------------------------------------------ */
+.nm-glow-btn {
+  transition: box-shadow var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out),
+              background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-spring);
+}
+.nm-glow-btn:hover:not(:disabled) {
+  border-color: var(--accent-ring);
+  box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-accent);
+  transform: translateY(-1px);
+}
+.nm-glow-btn:active:not(:disabled) { transform: scale(0.98); }
+
+/* ---- Tabs with an accent glow on the active one ----------------------- */
+.nm-tabs { gap: 6px; }
+.nm-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: color var(--dur-fast) var(--ease-out), text-shadow var(--dur) var(--ease-out);
+}
+.nm-tab > svg { opacity: 0.7; }
+.nm-tab.active { text-shadow: 0 0 14px var(--primary-glow); }
+.nm-tab.active > svg { opacity: 1; }
+.nm-tab.active::after { box-shadow: 0 0 10px var(--primary-glow); }
+
+/* ---- Status dot ------------------------------------------------------- */
+.nm-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--text-tertiary);
+  display: inline-block;
+}
+.nm-dot.is-online {
+  background: var(--success);
+  box-shadow: 0 0 0 3px var(--success-soft), 0 0 10px var(--success);
+  animation: nm-pulse 2s var(--ease-in-out) infinite;
+}
+@keyframes nm-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px var(--success-soft), 0 0 8px var(--success); }
+  50%      { box-shadow: 0 0 0 5px var(--success-soft), 0 0 14px var(--success); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nm-dot.is-online { animation: none; }
+}
+
+/* ---- Device cell ------------------------------------------------------ */
+.nm-device { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.nm-device-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--bg-deep);
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+}
+.nm-device-icon.is-online {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-ring);
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+.nm-device-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---- Table tweaks ----------------------------------------------------- */
+.nm-table .nm-endpoint,
+.nm-table .nm-detail {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nm-table .nowrap { white-space: nowrap; }
+
+/* ---- Log kind chips --------------------------------------------------- */
+.nm-kind-import { background: var(--warning-soft); color: var(--warning); }
+.nm-kind-sync   { background: var(--accent-soft); color: var(--accent); }
+.nm-kind-device { background: var(--success-soft); color: var(--success); }
+.nm-kind-other  { background: var(--bg-deep); color: var(--text-muted); }
+
+/* ---- Logs / remote stacking ------------------------------------------ */
+.nm-logs, .nm-remote { display: flex; flex-direction: column; gap: 14px; }
+
+.nm-server-chip { display: inline-flex; align-items: center; gap: 6px; }
+.nm-err { color: var(--error); font-weight: 600; }
+code { font-family: var(--font-mono); font-size: 0.92em; }
+
+/* ---- Active users (localhost vs server-hosted) ------------------------ */
+.nm-users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px;
+}
+.nm-users-card { display: flex; flex-direction: column; }
+.nm-users { list-style: none; margin: 0; padding: 6px; display: flex; flex-direction: column; gap: 2px; }
+.nm-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.nm-user:hover { background: var(--surface-hover); }
+.nm-user-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.nm-user-name { font-weight: 700; font-size: var(--fs-callout); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nm-user-sub { font-size: var(--fs-footnote); color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nm-user .nm-dot { margin-inline-start: auto; }
+
+/* ---- Refresh spinner -------------------------------------------------- */
+.nm-spin { animation: nm-rotate 0.8s linear infinite; }
+@keyframes nm-rotate { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .nm-spin { animation: none; }
+}

@@ -1,0 +1,186 @@
+/* Promotions (Dapper Phase 2) */
+
+.promo-screen {
+    padding: 24px 28px;
+    overflow-y: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.promo-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.promo-header h1 {
+    margin: 0;
+    font-size: 1.6rem;
+}
+
+.promo-header p {
+    margin: 4px 0 0;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+}
+
+.promo-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    border: none;
+    background: var(--accent-grad, var(--accent));
+    color: var(--text-on-accent);
+    border-radius: var(--r-sm, 8px);
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.promo-cancel {
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm, 8px);
+    color: inherit;
+    cursor: pointer;
+}
+
+.promo-error {
+    padding: 10px 14px;
+    border-radius: var(--r-sm, 8px);
+    background: var(--error-soft, var(--surface-2));
+    border: 1px solid var(--error);
+    color: var(--error);
+    font-size: 0.88rem;
+}
+
+.promo-card {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-2xl, 16px);
+    padding: 20px;
+}
+
+.promo-card h3 {
+    margin: 0 0 14px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.promo-hint {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* --- Form --- */
+
+.promo-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.promo-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.promo-form label span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.promo-form input,
+.promo-form select {
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm, 8px);
+    color: inherit;
+    font-size: 0.92rem;
+}
+
+.promo-form input:focus,
+.promo-form select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.promo-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+/* --- Table --- */
+
+.promo-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.87rem;
+}
+
+.promo-table th,
+.promo-table td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid var(--separator, var(--border-light));
+}
+
+.promo-table th {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.promo-table td.num {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.promo-table tr.inactive {
+    opacity: 0.5;
+}
+
+.promo-toggle {
+    padding: 4px 12px;
+    border-radius: var(--r-full, 999px);
+    border: 1px solid var(--border-light);
+    background: var(--surface-2);
+    color: inherit;
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.promo-table tr:not(.inactive) .promo-toggle {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.promo-del {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+}
+
+.promo-del:hover {
+    color: var(--error);
+}

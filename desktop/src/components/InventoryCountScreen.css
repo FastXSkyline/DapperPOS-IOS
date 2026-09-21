@@ -1,0 +1,346 @@
+/* Inventaire — Elegance palette (src/styles/tokens.css).
+   Counting is repetitive keyboard work, so the row is built around the number
+   field: big hit target, tab order left-to-right, Enter commits. */
+
+.cnt-screen {
+    padding: 24px 28px 40px;
+    overflow-y: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.cnt-header h1 {
+    margin: 0;
+    font-size: var(--fs-title1);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-main);
+}
+
+.cnt-header p {
+    margin: 6px 0 0;
+    max-width: 78ch;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+}
+
+/* --- Panels ------------------------------------------------------------- */
+
+.cnt-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.cnt-panel h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: var(--fs-headline);
+    color: var(--text-main);
+}
+
+.cnt-panel-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.cnt-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 14px;
+    margin-top: 5px;
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+}
+
+/* --- Progress ----------------------------------------------------------- */
+
+.cnt-progress { min-width: 200px; text-align: right; }
+
+.cnt-bar {
+    height: 6px;
+    background: var(--bg-deep);
+    border-radius: var(--r-full);
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.cnt-bar i {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    border-radius: var(--r-full);
+    transition: width var(--dur) var(--ease-out);
+}
+
+.cnt-progress span { font-size: var(--fs-footnote); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+/* --- Running totals ----------------------------------------------------- */
+
+.cnt-summary {
+    display: flex;
+    gap: 26px;
+    flex-wrap: wrap;
+    padding: 13px 16px;
+    background: var(--surface-2);
+    border-radius: var(--r-sm);
+}
+
+.cnt-summary > div { display: flex; flex-direction: column; gap: 2px; }
+
+.cnt-summary span {
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.cnt-summary strong {
+    font-size: var(--fs-title3);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-main);
+}
+
+/* Missing stock is money gone; found stock is a correction. Both need to be
+   distinguishable at a glance, in opposite directions. */
+.cnt-summary .neg, .cnt-table .neg { color: var(--error); }
+.cnt-summary .pos, .cnt-table .pos { color: var(--success); }
+
+/* --- Start form --------------------------------------------------------- */
+
+.cnt-start { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.cnt-start label { display: flex; flex-direction: column; gap: 5px; min-width: 190px; }
+.cnt-start span { font-size: var(--fs-footnote); font-weight: 600; color: var(--text-muted); }
+
+.cnt-start select {
+    padding: 9px 11px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}
+
+/* --- Toolbar ------------------------------------------------------------ */
+
+.cnt-toolbar { display: flex; gap: 9px; align-items: center; flex-wrap: wrap; }
+
+.cnt-scan,
+.cnt-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+/* The scanner field is the primary input during a count, so it is visibly the
+   one the cursor belongs in. */
+.cnt-scan {
+    flex: 1;
+    min-width: 230px;
+    border-color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.cnt-scan svg { color: var(--accent); flex-shrink: 0; }
+.cnt-search { min-width: 180px; }
+.cnt-search svg { color: var(--text-tertiary); flex-shrink: 0; }
+
+.cnt-scan input,
+.cnt-search input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 9px 0;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}
+
+.cnt-filters {
+    display: inline-flex;
+    gap: 3px;
+    padding: 3px;
+    background: var(--bg-deep);
+    border-radius: var(--r-sm);
+}
+
+.cnt-filters button {
+    padding: 7px 12px;
+    border: none;
+    background: transparent;
+    border-radius: var(--r-xs);
+    font-family: inherit;
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.cnt-filters button.active { background: var(--surface); color: var(--accent); box-shadow: var(--shadow-sm); }
+
+/* --- Table -------------------------------------------------------------- */
+
+/* Capped so the footer with "Appliquer" stays reachable without scrolling past
+   a thousand rows. */
+.cnt-table-wrap { max-height: 460px; overflow: auto; border: 1px solid var(--border-light); border-radius: var(--r-sm); }
+
+.cnt-table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
+
+.cnt-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--surface);
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-tertiary);
+    border-bottom: 1px solid var(--border-light);
+    white-space: nowrap;
+}
+
+.cnt-table td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--separator);
+    color: var(--text-main);
+}
+
+.cnt-table tbody tr:last-child td { border-bottom: none; }
+.cnt-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.cnt-table .muted { color: var(--text-muted); }
+.cnt-table .mono { font-variant-numeric: tabular-nums; }
+.cnt-none { text-align: center; padding: 26px 0 !important; }
+
+/* Counted-and-matching recedes; counted-with-a-difference stands out. The eye
+   should be drawn to the rows that need a decision. */
+.cnt-table tr.ok td { background: var(--success-soft); }
+.cnt-table tr.diff td { background: var(--warning-soft); }
+
+.cnt-qty {
+    width: 86px;
+    padding: 6px 9px;
+    text-align: right;
+    font-family: inherit;
+    font-size: var(--fs-callout);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-main);
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-xs);
+}
+
+.cnt-qty:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.cnt-icon {
+    display: inline-flex;
+    padding: 5px;
+    border: none;
+    background: none;
+    border-radius: var(--r-xs);
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.cnt-icon:hover { background: var(--surface-hover); color: var(--text-main); }
+
+/* --- Banners & actions -------------------------------------------------- */
+
+.cnt-error,
+.cnt-result,
+.cnt-note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    border-radius: var(--r-sm);
+    font-size: var(--fs-small);
+}
+
+.cnt-error { background: var(--error-soft); border: 1px solid var(--error); color: var(--error); font-weight: 500; }
+.cnt-note { background: var(--warning-soft); color: var(--text-main); line-height: 1.45; }
+.cnt-note svg { color: var(--warning); flex-shrink: 0; }
+
+.cnt-result {
+    align-items: flex-start;
+    background: var(--success-soft);
+    border: 1px solid var(--success);
+}
+
+.cnt-result > svg { color: var(--success); flex-shrink: 0; margin-top: 1px; }
+.cnt-result strong { color: var(--success); }
+.cnt-result p { margin: 3px 0 0; color: var(--text-main); font-variant-numeric: tabular-nums; }
+.cnt-result button { margin-left: auto; border: none; background: none; color: var(--text-muted); cursor: pointer; display: inline-flex; }
+
+.cnt-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--separator);
+}
+
+.cnt-primary,
+.cnt-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 17px;
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.cnt-primary { border: none; background: var(--accent); color: var(--text-on-accent); }
+.cnt-primary:hover:not(:disabled) { background: var(--accent-hover); }
+.cnt-ghost { border: 1px solid var(--border-light); background: var(--surface); color: var(--text-main); }
+.cnt-ghost:hover:not(:disabled) { background: var(--surface-hover); }
+.cnt-primary:disabled, .cnt-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.cnt-empty { margin: 0; padding: 16px 0; color: var(--text-muted); font-size: var(--fs-small); }
+
+.cnt-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: var(--r-full);
+    background: var(--bg-deep);
+    color: var(--text-muted);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+}
+
+.cnt-badge.counting, .cnt-badge.review { background: var(--accent-soft); color: var(--accent); }
+.cnt-badge.applied { background: var(--success-soft); color: var(--success); }
+.cnt-badge.cancelled { background: var(--error-soft); color: var(--error); }
+
+@media (max-width: 900px) {
+    .cnt-screen { padding: 18px 16px 32px; }
+    .cnt-table { min-width: 720px; }
+}

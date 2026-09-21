@@ -1,0 +1,48 @@
+/* Clients. Layout only; the rest is styles/elegance.css. */
+
+.cs-search { max-width: 380px; }
+
+.cs-tab-count {
+  margin-inline-start: 6px;
+  padding: 1px 6px;
+  border-radius: var(--r-full);
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.cs-person { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.cs-person > span { display: flex; flex-direction: column; min-width: 0; }
+.cs-person strong { font-weight: 700; }
+.cs-person small { font-size: var(--fs-footnote); color: var(--text-muted); font-weight: 500; }
+
+.cs-avatar {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--bg-deep);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* An outstanding balance is money the shop is owed — it reads as a warning,
+   not as an error: it is normal for a credit customer to carry one. */
+.cs-owed { color: var(--warning); }
+.cs-stat-owed .el-stat-value { color: var(--warning); }
+.cs-over { margin-inline-start: 8px; }
+
+.cs-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.cs-span2 { grid-column: 1 / -1; }
+.cs-form-grid .el-label { display: inline-flex; align-items: center; gap: 5px; }
+
+/* DebtorsList brings its own page padding; the tab already supplies it. */
+.cs .debtors-list, .cs .debtors-container { padding: 0; }

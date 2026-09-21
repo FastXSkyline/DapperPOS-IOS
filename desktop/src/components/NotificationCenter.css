@@ -1,0 +1,193 @@
+/* Notification centre — Elegance palette (src/styles/tokens.css).
+   Lives in the sidebar header; the panel floats over the content. */
+
+.ntf { position: relative; }
+
+.ntf-trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--border-light);
+    background: var(--surface);
+    border-radius: var(--r-sm);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.ntf-trigger:hover { background: var(--surface-hover); color: var(--text-main); }
+.ntf-trigger.has-unread { color: var(--accent); border-color: var(--accent); }
+
+.ntf-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--error);
+    color: #fff;
+    border-radius: var(--r-full);
+    font-size: 10px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    /* A ring so the badge reads as a separate object against any header colour. */
+    box-shadow: 0 0 0 2px var(--bg-sidebar);
+}
+
+/* --- Panel -------------------------------------------------------------- */
+
+.ntf-panel {
+    position: absolute;
+    z-index: 60;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 370px;
+    max-width: calc(100vw - 32px);
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-float);
+    overflow: hidden;
+}
+
+.ntf-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--separator);
+}
+
+.ntf-head strong { font-size: var(--fs-callout); color: var(--text-main); }
+.ntf-head-actions { display: flex; gap: 4px; }
+
+.ntf-head-actions button {
+    display: inline-flex;
+    padding: 6px;
+    border: none;
+    background: none;
+    border-radius: var(--r-xs);
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.ntf-head-actions button:hover:not(:disabled) { background: var(--surface-hover); color: var(--text-main); }
+.ntf-head-actions button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.spin { animation: ntf-spin 900ms linear infinite; }
+@keyframes ntf-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .spin { animation: none; }
+}
+
+.ntf-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--separator);
+}
+
+.ntf-tabs button {
+    flex: 1;
+    padding: 6px 10px;
+    border: none;
+    background: transparent;
+    border-radius: var(--r-xs);
+    font-family: inherit;
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.ntf-tabs button.active { background: var(--accent-soft); color: var(--accent); }
+
+/* --- Items -------------------------------------------------------------- */
+
+.ntf-list { max-height: 420px; overflow-y: auto; }
+
+.ntf-state { margin: 0; padding: 32px 16px; text-align: center; color: var(--text-muted); font-size: var(--fs-small); }
+
+.ntf-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--separator);
+}
+
+.ntf-item:last-child { border-bottom: none; }
+
+/* A left rule carries severity, so the row stays readable while the urgency is
+   still visible at a glance down the edge of the list. */
+.ntf-item.critical { box-shadow: inset 3px 0 0 var(--error); }
+.ntf-item.warning { box-shadow: inset 3px 0 0 var(--warning); }
+.ntf-item.success { box-shadow: inset 3px 0 0 var(--success); }
+.ntf-item.info { box-shadow: inset 3px 0 0 var(--border-light); }
+
+.ntf-item.critical > svg { color: var(--error); }
+.ntf-item.warning > svg { color: var(--warning); }
+.ntf-item.success > svg { color: var(--success); }
+.ntf-item.info > svg { color: var(--text-tertiary); }
+.ntf-item > svg { flex-shrink: 0; margin-top: 1px; }
+
+/* Read items recede but stay legible — dismissed is not deleted. */
+.ntf-item.read { opacity: 0.55; }
+
+.ntf-body { flex: 1; min-width: 0; }
+
+.ntf-title {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--text-main);
+    text-align: left;
+    cursor: pointer;
+    line-height: 1.35;
+}
+
+.ntf-title:hover { color: var(--accent); }
+
+.ntf-body p {
+    margin: 3px 0 0;
+    font-size: var(--fs-footnote);
+    color: var(--text-muted);
+    line-height: 1.45;
+}
+
+.ntf-when {
+    display: block;
+    margin-top: 4px;
+    font-size: var(--fs-caption);
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+}
+
+.ntf-dismiss {
+    display: inline-flex;
+    padding: 5px;
+    border: none;
+    background: none;
+    border-radius: var(--r-xs);
+    color: var(--text-tertiary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.ntf-dismiss:hover { background: var(--surface-hover); color: var(--success); }

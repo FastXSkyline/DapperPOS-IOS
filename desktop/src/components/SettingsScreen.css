@@ -1,0 +1,35 @@
+/* Paramètres. The panels mounted here (StoreSettings, PrinterSettings, the
+   fiscal forms) still carry their own older styles; this file only lays out the
+   screen around them and restyles the blocks that were inline-hex before. */
+
+.settings-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 900px;
+}
+
+.settings-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Danger zone: tinted from the semantic token, so it survives a theme flip.
+   It used to be a hardcoded #fef2f2 / #991b1b pair that vanished in dark mode. */
+.settings-danger { border-color: color-mix(in srgb, var(--error) 35%, var(--border-light)); }
+.settings-danger .el-card-title { color: var(--error); }
+.settings-danger-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--error-soft);
+  color: var(--error);
+  flex-shrink: 0;
+}
+
+/* The lifted panels write their own containers with hardcoded padding/borders.
+   Neutralise the worst of it so they sit on the canvas like cards rather than
+   nested boxes, without having to rewrite six forms in this pass. */
+.settings-screen .settings-stack > div[style*="var(--surface)"],
+.settings-screen .settings-stack > div[style*="var(--bg-main)"] {
+  border-radius: 14px;
+}

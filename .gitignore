@@ -1,0 +1,76 @@
+# ── GestionPOS monorepo .gitignore ──
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Secrets — NEVER commit (rotate the key if it was ever committed)
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Local SQLite databases (real data lives in the OS userData dir, not the repo)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# Build output & artifacts (regenerable — keep out of history)
+dist/
+**/dist/
+dist-ssr/
+dist-electron/
+**/dist-electron/
+release/
+**/release/
+build/
+web-build/
+*.tsbuildinfo
+
+# Expo / React Native
+.expo/
+.metro-health-check*
+expo-env.d.ts
+/mobile/ios
+/mobile/android
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Scratch / debug (move real tools into tools/ instead)
+desktop/debug_*.js
+desktop/debug_*.cjs
+desktop/test.js
+
+# Firebase / Firestore — service-account keys must NEVER be committed.
+# (Dapper deliberately does NOT use firebase-admin: the desktop uses the client
+#  SDK + Auth so no service-account key exists to leak. If one is ever added,
+#  it is caught here.)
+**/serviceAccount*.json
+**/firebase-adminsdk*.json
+.firebaserc
+firebase-debug.log
+# NOTE: firestore.rules IS committed on purpose — it is the security boundary
+# and must be reviewable. The Firebase client config is public by design and is
+# stored in each app's local config table, not in the repo.

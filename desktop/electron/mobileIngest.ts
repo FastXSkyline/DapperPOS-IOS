@@ -1,0 +1,153 @@
+import { getDatabase } from './database'
+import { pricesIncludeTax, computeTimbre, computeLineTax, getProductTaxRate } from './transactionService'
+
+// ---------------------------------------------------------------------------
+// Ingest of sales recorded on mobile.
+//
+// Shared deliberately by BOTH transports — the LAN endpoint (/sync/transactions)
+// and the Firestore relay. A sale must be recomputed the same way no matter how
+// it reached the desktop, otherwise the same phone sale would produce different
+// TVA depending on whether the shop wifi happened to be up.
+//
+// The desktop is the system of record: it recomputes per-line TVA and the timbre
+// rather than trusting the numbers the phone sent.
+// ---------------------------------------------------------------------------
+
+/** One sale line as the phone recorded it. Prices are recomputed on arrival. */
+export interface MobileSaleItem {
+    product_id: number
+    variant_id?: number | null
+    product_name?: string | null
+    quantity: number
+    unit_price: number
+}
+
+export interface MobileSalePayment {
+    payment_method: string
+    amount: number
+}
+
+/** The payload a phone uploads, over LAN or via the Firestore relay. */
+export interface MobileSale {
+    transaction_number?: string
+    customer_id?: number | null
+    user_id?: number | null
+    status?: string
+    discount_amount?: number
+    amount_paid?: number
+    change_due?: number
+    items?: MobileSaleItem[]
+    payments?: MobileSalePayment[]
+}
+
+export interface MobileIngestResult {
+    success: number
+    failed: number
+    skipped: number
+    errors: string[]
+    /** transaction_numbers actually written — the cloud relay marks these ingested. */
+    ingested: string[]
+}
+
+export function ingestMobileTransactions(transactions: MobileSale[]): MobileIngestResult {
+    const db = getDatabase()
+    const ingested: string[] = []
+    const results = {
+        success: 0,
+        failed: 0,
+        errors: [] as string[]
+    }
+
+    // TVA recomputed server-side (desktop = system of record) so synced mobile sales are
+    // fiscally correct and per-line tax feeds the reports/declarations. Mobile computes the
+    // same way (HT/TTC config), so amount_paid matches the recomputed TTC total.
+    const ttc = pricesIncludeTax(db)
+    let skipped = 0
+    const insertTx = db.transaction((txData: MobileSale) => {
+        const { transaction_number, customer_id, user_id, status, discount_amount, amount_paid, change_due, items, payments } = txData
+
+        // Idempotent re-sync: if this device's transaction was already ingested
+        // (same transaction_number), skip it — never double-insert or double-decrement stock.
+        if (transaction_number) {
+            const exists = db.prepare('SELECT 1 FROM transactions WHERE transaction_number = ?').get(transaction_number)
+            if (exists) { skipped++; return 'skipped' }
+        }
+
+        const info = db.prepare(`
+            INSERT INTO transactions (
+                transaction_number, customer_id, user_id, status,
+                subtotal, discount_amount, tax_amount, total_amount,
+                amount_paid, change_due, source_device, sync_status, created_at
+            ) VALUES (?, ?, ?, ?, 0, ?, 0, 0, ?, ?, 'mobile', 1, datetime('now'))
+         `).run(
+            transaction_number, customer_id || null, user_id || 1, status || 'completed',
+            discount_amount || 0, amount_paid || 0, change_due || 0
+        )
+        const txId = info.lastInsertRowid as number
+
+        const insertItem = db.prepare(`
+            INSERT INTO transaction_items(
+                transaction_id, product_id, variant_id, product_name, quantity, unit_price, tax_rate, tax_amount, line_total
+            ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `)
+        // Two statements, not one: a product with variants has a stock row per
+        // size/colour, so a variant-blind "WHERE product_id = ?" would decrement
+        // EVERY size for a single sale. The variant line must target its own row.
+        const updateStockVariant = db.prepare(`UPDATE stock_inventory SET quantity = quantity - ?, updated_at = datetime('now') WHERE product_id = ? AND variant_id = ?`)
+        const updateStockBase = db.prepare(`UPDATE stock_inventory SET quantity = quantity - ?, updated_at = datetime('now') WHERE product_id = ? AND variant_id IS NULL`)
+        const insertMovement = db.prepare(`INSERT INTO stock_movements (product_id, variant_id, movement_type, quantity, reason, reference_type, reference_id) VALUES (?, ?, 'out', ?, 'Vente mobile', 'transaction', ?)`)
+
+        let subtotal = 0
+        let rawTax = 0
+        for (const item of (items || [])) {
+            const rate = getProductTaxRate(db, item.product_id)
+            const { ht, tax } = computeLineTax((item.unit_price || 0) * (item.quantity || 0), rate, ttc)
+            const variantId = item.variant_id || null
+            insertItem.run(txId, item.product_id, variantId, item.product_name, item.quantity, item.unit_price, rate, tax, ht)
+            if (variantId) updateStockVariant.run(item.quantity, item.product_id, variantId)
+            else updateStockBase.run(item.quantity, item.product_id)
+            // Mobile sales previously moved stock with no audit row; the desktop path
+            // always writes one, so the two are now consistent.
+            insertMovement.run(item.product_id, variantId, -(item.quantity || 0), txId)
+            subtotal += ht
+            rawTax += tax
+        }
+
+        const discount = discount_amount || 0
+        const taxableRatio = subtotal > 0 ? Math.max(0, subtotal - discount) / subtotal : 1
+        const taxAmount = rawTax * taxableRatio
+        const totalAmount = (subtotal - discount) + taxAmount
+
+        // Mobile sales are paid in full; set amount_paid to the recomputed TTC total so the
+        // server recompute can never create phantom debt, and compute timbre on the cash part.
+        const cashFromPayload = Array.isArray(payments)
+            ? payments.filter(p => p.payment_method === 'cash').reduce((s: number, p) => s + (p.amount || 0), 0)
+            : totalAmount
+        const timbre = computeTimbre(Math.min(cashFromPayload || totalAmount, totalAmount))
+        db.prepare(`UPDATE transactions SET subtotal = ?, tax_amount = ?, total_amount = ?, amount_paid = ?, change_due = 0, timbre = ? WHERE id = ?`).run(subtotal, taxAmount, totalAmount, totalAmount, timbre, txId)
+
+        if (payments && Array.isArray(payments)) {
+            const insertPay = db.prepare(`INSERT INTO payments(transaction_id, payment_method, amount) VALUES(?, ?, ?)`)
+            for (const p of payments) {
+                insertPay.run(txId, p.payment_method, p.amount)
+            }
+        }
+    })
+
+    // Process batch
+    for (const tx of transactions) {
+        try {
+            const r = insertTx(tx)
+            if (r !== 'skipped') {
+                results.success++
+                if (tx.transaction_number) ingested.push(tx.transaction_number)
+            }
+        } catch (e: unknown) {
+            console.error('Sync Transaction Error', e)
+            results.failed++
+            results.errors.push(e instanceof Error ? e.message : String(e))
+        }
+    }
+
+    return { ...results, skipped, ingested }
+}

@@ -1,0 +1,328 @@
+/* ============================================================
+   Analyses — restyled onto the Elegance language.
+
+   Class names are unchanged (AnalyticsDashboard.tsx still emits them); every
+   rule is now the same card, stat and table the rest of the app uses.
+
+   ONE DELIBERATE CHANGE OF SUBSTANCE: the six stat cards used to be six
+   differently-tinted tiles (primary / success / ghost / purple / danger /
+   warning). That is the generic-dashboard look the brief rules out, and worse,
+   it spent semantic colour on decoration — once every tile is coloured, a tile
+   that is coloured because something is WRONG says nothing.
+
+   So the card is white and only its ICON carries a tint. Debt and stock keep a
+   meaningful tint because they are the two figures a shop acts on; the rest are
+   neutral.
+   ============================================================ */
+
+.dashboard {
+  padding: 24px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.dashboard > * { flex-shrink: 0; }
+
+.loading {
+  padding: 56px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-callout);
+}
+
+/* ---------------------------------------------------------------- header --- */
+.dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.header-left { min-width: 0; }
+.dashboard-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-tighter);
+  color: var(--text-main);
+  line-height: 1.15;
+}
+
+.header-actions {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.date-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.presets {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--bg-deep);
+}
+.presets > button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.presets > button:hover { color: var(--text-main); }
+.presets > button.active {
+  background: var(--surface);
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+}
+
+.custom-range { display: flex; align-items: center; gap: 6px; }
+.custom-range input {
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 9px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: var(--fs-small);
+}
+.custom-range input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.btn-print, .btn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 9px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-print:hover, .btn-text:hover { background: var(--surface-hover); }
+.btn-text { border-color: transparent; background: transparent; color: var(--text-muted); }
+.btn-text:hover { color: var(--text-main); }
+
+/* ----------------------------------------------------------------- stats --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  padding: 16px 18px;
+  min-width: 0;
+}
+
+.stat-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  background: var(--bg-deep);
+  color: var(--text-muted);
+}
+.stat-icon > svg { width: 19px; height: 19px; }
+
+/* Only the icon is tinted, and only where the tint MEANS something. */
+.stat-card.primary .stat-icon { background: var(--accent-soft); color: var(--accent); }
+.stat-card.success .stat-icon { background: var(--success-soft); color: var(--success); }
+.stat-card.danger .stat-icon { background: var(--error-soft); color: var(--error); }
+.stat-card.warning .stat-icon { background: var(--warning-soft); color: var(--warning); }
+/* purple / ghost carried no meaning; they read as neutral. */
+
+.stat-content { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.stat-content > label {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stat-content .value {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: var(--tracking-tighter);
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stat-content .sub-label,
+.stat-content .margin {
+  font-size: var(--fs-footnote);
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------------------- charts --- */
+.charts-main-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.chart-card, .detail-card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  padding: 18px 20px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.chart-card.span-2 { grid-column: span 2; }
+@media (max-width: 980px) { .chart-card.span-2 { grid-column: span 1; } }
+
+.chart-header, .card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.chart-header h3, .card-header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-main);
+}
+.chart-header > *:last-child, .card-header > *:last-child { margin-inline-start: auto; }
+
+/* Recharts measures 0 on first paint inside a grid track without this. */
+.chart-container { min-width: 0; }
+.chart-container.pie { display: flex; justify-content: center; }
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+/* ---------------------------------------------------------------- tables --- */
+.performance-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-small);
+}
+.performance-table th {
+  text-align: start;
+  padding: 9px 10px;
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--separator);
+  white-space: nowrap;
+}
+.performance-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--separator);
+  color: var(--text-main);
+  font-weight: 500;
+  vertical-align: middle;
+}
+.performance-table tr:last-child td { border-bottom: none; }
+.performance-table .right { text-align: end; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.performance-table .center { text-align: center; }
+[dir="rtl"] .performance-table .right { text-align: start; }
+
+.rank {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: var(--bg-deep);
+  color: var(--text-muted);
+  font-size: var(--fs-footnote);
+  font-weight: 700;
+}
+.product-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.product-info > span:last-child { font-size: var(--fs-footnote); color: var(--text-muted); }
+
+/* Share-of-total bar. One ink: these are ordered magnitudes of the same
+   measure, not separate identities, so a hue per row would be noise. */
+.progress-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-deep);
+  overflow: hidden;
+  min-width: 60px;
+}
+.progress-bar .fill { height: 100%; border-radius: 3px; background: var(--accent); }
+
+/* ---------------------------------------------------------------- lists ---- */
+.debtors-mini-list { display: flex; flex-direction: column; }
+.debtor-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--separator);
+}
+.debtor-row:last-child { border-bottom: none; }
+.debtor-name {
+  font-size: var(--fs-small);
+  color: var(--text-main);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.debtor-amount {
+  margin-inline-start: auto;
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--warning);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------------- print --- */
+.print-header { display: none; }
+@media print {
+  .no-print { display: none !important; }
+  .only-print { display: block !important; }
+  .dashboard { padding: 0; }
+  .stat-card, .chart-card, .detail-card {
+    box-shadow: none;
+    border-color: #ccc;
+    break-inside: avoid;
+  }
+}

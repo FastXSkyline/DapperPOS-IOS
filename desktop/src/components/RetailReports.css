@@ -1,0 +1,308 @@
+/* ============================================================
+   Rapports — restyled onto the Elegance language.
+
+   The class names are unchanged (RetailReports.tsx still emits rr-*), but every
+   rule below is now the same card, the same stat, the same table and the same
+   pill the Dashboard and Inventaire use. That is the point of the exercise: two
+   screens showing the same figures should not look like two products.
+
+   Nothing here hardcodes a hex; retuning tokens.css retunes this file. The
+   chart colours are resolved in useChartTheme.ts, not here — Recharts writes
+   SVG attributes and cannot read a CSS variable.
+   ============================================================ */
+
+.rr-screen {
+  padding: 24px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.rr-screen > * { flex-shrink: 0; }
+
+.rr-state {
+  padding: 56px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-callout);
+}
+
+/* ---------------------------------------------------------------- header --- */
+.rr-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.rr-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-tighter);
+  color: var(--text-main);
+  line-height: 1.15;
+}
+/* The definition of "bénéfice brut" lives in this subtitle. It is not filler:
+   the number below it excludes rent and salaries, and a reader who assumes
+   otherwise is reading it wrong. */
+.rr-header p {
+  margin: 4px 0 0;
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  font-weight: 500;
+  max-width: 78ch;
+  line-height: 1.5;
+}
+
+.rr-filters {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Period presets — the same segmented control as everywhere else. */
+.rr-presets {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--bg-deep);
+}
+.rr-presets > button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.rr-presets > button:hover { color: var(--text-main); }
+.rr-presets > button.active {
+  background: var(--surface);
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Store scope — the mockup's white pill with a hairline. */
+.rr-scope {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 9px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+}
+.rr-scope:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
+.rr-scope > select {
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+}
+
+/* ------------------------------------------------------------------ KPIs --- */
+.rr-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(178px, 1fr));
+  gap: 14px;
+}
+
+.rr-kpi {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.rr-kpi > span:first-child,
+.rr-kpi .rr-kpi-label {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rr-metric {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: var(--tracking-tighter);
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Delta. Green/red is the SIGN with respect to what is GOOD, which is why the
+   component passes `invert` for returns — a falling return rate is good news. */
+.rr-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fs-footnote);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.rr-delta.good { color: var(--success); }
+.rr-delta.bad { color: var(--error); }
+.rr-delta.flat { color: var(--text-tertiary); }
+.rr-delta.none { color: var(--text-tertiary); font-weight: 600; }
+
+/* A figure resting partly on estimated cost must say so. */
+.rr-caveat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  line-height: 1.45;
+}
+.rr-caveat > svg { flex-shrink: 0; }
+
+/* ----------------------------------------------------------------- cards --- */
+.rr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.rr-card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  padding: 18px 20px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.rr-card.wide { grid-column: 1 / -1; }
+
+.rr-card h2 {
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-main);
+}
+
+.rr-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.rr-card-head h2 { margin: 0; }
+.rr-card-head > *:last-child { margin-inline-start: auto; }
+
+.rr-empty {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-small);
+  margin: 0;
+}
+
+/* Recharts inside a grid track needs a definite width or it measures 0 on the
+   first paint and the chart never appears. */
+.rr-card .recharts-responsive-container { min-width: 0; }
+
+/* ---------------------------------------------------------------- tables --- */
+.rr-table, .rr-mini {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-small);
+}
+.rr-table th, .rr-mini th {
+  text-align: start;
+  padding: 9px 12px;
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--separator);
+  white-space: nowrap;
+}
+.rr-table td, .rr-mini td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--separator);
+  color: var(--text-main);
+  font-weight: 500;
+}
+.rr-table tr:last-child td, .rr-mini tr:last-child td { border-bottom: none; }
+.rr-table tbody tr:hover { background: var(--surface-hover); }
+.rr-table .num, .rr-mini .num {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.rr-table .muted, .rr-mini .muted { color: var(--text-muted); }
+[dir="rtl"] .rr-table .num, [dir="rtl"] .rr-mini .num { text-align: start; }
+
+/* The mini table under a chart is a legend with numbers, so it sits tighter. */
+.rr-mini { margin-top: 12px; }
+.rr-mini td, .rr-mini th { padding: 6px 8px; font-size: var(--fs-footnote); }
+
+/* ---------------------------------------------------------------- legend --- */
+.rr-legend {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.rr-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-footnote);
+}
+.rr-legend i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  /* A white slice must not vanish against a white card. */
+  box-shadow: inset 0 0 0 1px rgba(20, 22, 31, 0.18);
+}
+.rr-legend span {
+  color: var(--text-muted);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rr-legend b {
+  margin-inline-start: auto;
+  color: var(--text-main);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}

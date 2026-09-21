@@ -1,0 +1,19 @@
+/* Fournisseurs. Layout only — the rest is styles/elegance.css. */
+
+.sup-search { width: 260px; }
+
+.sup-actions { display: flex; gap: 2px; justify-content: flex-end; }
+
+.sup-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.sup-span2 { grid-column: 1 / -1; }
+
+/* Icons inside a field label sit on the text baseline rather than above it. */
+.sup-form-grid .el-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}

@@ -1,0 +1,179 @@
+/* Serveur / poste client — Elegance palette (src/styles/tokens.css). */
+
+.tmp {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.tmp-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.tmp-head h3 { margin: 0; font-size: var(--fs-headline); color: var(--text-main); }
+
+.tmp-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 11px;
+    border-radius: var(--r-full);
+    font-size: var(--fs-footnote);
+    font-weight: 700;
+}
+
+/* Offline is the state a cashier must never miss, so it is the loudest thing on
+   the panel — the brief asks for the ONLINE/OFFLINE state to be plainly visible. */
+.tmp-status.online { background: var(--success-soft); color: var(--success); }
+.tmp-status.offline { background: var(--error-soft); color: var(--error); }
+.tmp-status.server { background: var(--accent-soft); color: var(--accent); }
+
+.tmp-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 15px;
+    background: var(--error-soft);
+    border: 1px solid var(--error);
+    border-radius: var(--r-sm);
+}
+
+.tmp-alert > svg { color: var(--error); flex-shrink: 0; margin-top: 1px; }
+.tmp-alert strong { display: block; color: var(--error); font-size: var(--fs-small); }
+.tmp-alert p { margin: 4px 0 0; font-size: var(--fs-footnote); color: var(--text-main); line-height: 1.5; }
+
+/* --- Mode choice -------------------------------------------------------- */
+
+.tmp-modes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px;
+}
+
+.tmp-mode {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    padding: 15px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.tmp-mode:hover { background: var(--surface-hover); }
+.tmp-mode.active { border-color: var(--accent); background: var(--accent-soft); }
+.tmp-mode svg { color: var(--accent); }
+.tmp-mode strong { font-size: var(--fs-callout); color: var(--text-main); }
+.tmp-mode span { font-size: var(--fs-footnote); color: var(--text-muted); line-height: 1.45; }
+
+/* --- Pairing details ---------------------------------------------------- */
+
+.tmp-server-info p { margin: 0 0 10px; font-size: var(--fs-small); color: var(--text-muted); line-height: 1.5; }
+
+.tmp-pair {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+}
+
+.tmp-pair label,
+.tmp-client-form label { display: flex; flex-direction: column; gap: 5px; }
+
+.tmp-pair span,
+.tmp-client-form span { font-size: var(--fs-footnote); font-weight: 600; color: var(--text-muted); }
+
+.tmp-pair code {
+    padding: 9px 11px;
+    background: var(--bg-deep);
+    border-radius: var(--r-sm);
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    color: var(--text-main);
+    word-break: break-all;
+}
+
+/* The pairing token is the secret the other tills need; it has to be readable
+   off this screen, so it is shown rather than masked. */
+.tmp-token { user-select: all; }
+
+.tmp-client-form { display: flex; flex-direction: column; gap: 10px; max-width: 460px; }
+
+.tmp-client-form input {
+    padding: 9px 11px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}
+
+.tmp-client-form input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.tmp-test {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    font-size: var(--fs-small);
+    font-weight: 600;
+}
+
+.tmp-test.ok { color: var(--success); }
+.tmp-test.bad { color: var(--error); }
+
+.tmp-error {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    font-size: var(--fs-small);
+    color: var(--error);
+    font-weight: 500;
+}
+
+/* --- Buttons ------------------------------------------------------------ */
+
+.tmp-actions { display: flex; justify-content: flex-end; }
+
+.tmp-primary,
+.tmp-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 16px;
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.tmp-primary { border: none; background: var(--accent); color: var(--text-on-accent); }
+.tmp-primary:hover:not(:disabled) { background: var(--accent-hover); }
+.tmp-ghost {
+    align-self: flex-start;
+    border: 1px solid var(--border-light);
+    background: var(--surface);
+    color: var(--text-main);
+}
+.tmp-ghost:hover:not(:disabled) { background: var(--surface-hover); }
+.tmp-primary:disabled, .tmp-ghost:disabled { opacity: 0.5; cursor: not-allowed; }

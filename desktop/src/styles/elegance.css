@@ -1,0 +1,925 @@
+/* ============================================================
+   Elegance — screen furniture.
+
+   The vocabulary every screen is built from, so a new window matches the
+   mockup by construction instead of by re-typing the same paddings. The
+   mockup is the spec: white cards on a cool grey ground, 14px radii, a 1px
+   border doing the work a shadow used to do, one indigo accent, and type that
+   steps 24 / 15 / 13 / 12 and stops.
+
+   Rules that are not negotiable here:
+     • A card is a border, not a shadow. --shadow-sm is the whole elevation.
+       Cards do not lift on hover; only things you can CLICK move.
+     • Numbers are tabular. A column of prices that dances as it updates is a
+       column you cannot scan.
+     • Nothing here hardcodes a hex. Retuning tokens.css must retune this file.
+   ============================================================ */
+
+/* ---------------------------------------------------------------- page ---- */
+.el-page {
+  padding: 24px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 100%;
+  box-sizing: border-box;
+  /* .main-content is a flex column and this is one of its items. `min-height:
+     100%` replaces the automatic minimum size, so without an explicit
+     flex-shrink:0 the whole page is squeezed to the viewport and everything
+     past the fold becomes unreachable rather than scrollable. */
+  flex-shrink: 0;
+}
+
+/* ------------------------------------------------------- reports shell ----
+   The Rapports container: its three sections (graphiques / comptabilité /
+   documents) share one page, switched by a segmented control lifted to page
+   level and floating on the canvas — the same `.el-segmented` widget cards
+   use, so switching modes feels like the page, not a link row. */
+.reports-shell { min-height: 100%; display: flex; flex-direction: column; }
+.reports-tabsbar { padding: 18px 28px 0; flex-shrink: 0; }
+.reports-seg {
+  display: inline-flex;
+  padding: 4px;
+  gap: 3px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+.reports-seg .el-seg {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 16px;
+  font-size: var(--fs-body);
+}
+
+/* ------------------------------------------- compact form utilities -------
+   The accounting / documents forms: rows of labelled controls that flow and
+   wrap. `ac-btns` is the flex row; the sized variants give the compact
+   period/quantity inputs their tabular widths. Logical properties only —
+   the Arabic mirror must hold. */
+.ac-ico {
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--accent-soft);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.ac-btns { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.ac-btns > .el-select { flex: 0 1 auto; width: auto; min-width: 180px; }
+.ac-btns > .el-input { width: auto; }
+.ac-year { width: 92px; }
+.ac-month { width: 70px; }
+.ac-count { width: 86px; height: 30px; padding: 0 8px; }
+.ac-msg { display: flex; }
+.doc-line { display: contents; }
+.doc-line > .el-select { min-width: 210px; }
+.doc-line-qty { width: 90px; }
+.doc-notes { min-width: 200px; flex: 1 1 180px; }
+.doc-deposit { width: 130px; }
+.doc-hint { font-size: var(--fs-footnote); color: var(--text-muted); font-weight: 500; }
+/* Row actions sit tight: a hairline gap, not the full grid gap. */
+.el-table td .el-btn + .el-btn { margin-inline-start: 6px; }
+.el-table .el-empty { padding: 18px; }
+
+/* NOTHING in a page compresses.
+   This is not a nicety — it fixes a real overlap. A flex item's automatic
+   minimum size normally stops it shrinking below its content, but declaring an
+   explicit `min-height` (as .el-page-head does) REPLACES that automatic
+   minimum. So on any page taller than the viewport, flex would shrink the
+   header to 36px, its wrapped second row of controls would overflow, and the
+   cards below would paint straight over it — the period buttons and the date
+   showing through the gaps between the stat tiles.
+
+   The same shrink silently ate the tab bar on Settings once a tab's content
+   was tall, which is why there was no way back to the first tab. */
+.el-page > * { flex-shrink: 0; }
+.el-page--flush { padding: 0; gap: 0; }
+
+.el-page-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  min-height: 36px;
+}
+.el-page-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-tighter);
+  color: var(--text-main);
+  line-height: 1.15;
+}
+.el-page-sub {
+  margin: 3px 0 0;
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  font-weight: 500;
+}
+/* Everything after this in the header row sits hard right. */
+.el-page-actions {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ---------------------------------------------------------------- card ---- */
+/* Cards are WIDGETS now: gradient light from the top-left (the reference's
+   lit-tile look), and — the alive part — they respond to touch. Hovering
+   lifts them 1px and brightens the rim; PRESSING AND HOLDING sinks them
+   (scale .985 + sheen sweep + shadow tighten), so a click physically reads
+   on the surface. `:active` needs no JS, works for mouse/touch/keyboard. */
+.el-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, var(--accent-soft) 0%, transparent 46%),
+    var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  padding: 18px 20px;
+  box-sizing: border-box;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out);
+}
+.el-card:hover { border-color: var(--accent-ring); box-shadow: var(--shadow-md); }
+/* Press-and-hold: sink + a light sweep crossing the surface. */
+.el-card:active {
+  transform: scale(0.985);
+  box-shadow: var(--shadow-sm);
+}
+.el-card:active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.10) 48%, transparent 66%);
+  animation: el-sheen 0.6s var(--ease-out) forwards;
+  pointer-events: none;
+}
+@keyframes el-sheen {
+  from { transform: translateX(-70%); opacity: 0; }
+  30%  { opacity: 1; }
+  to   { transform: translateX(70%); opacity: 0; }
+}
+/* Interactive cards (clickable widgets) get the full lift treatment. */
+.el-card.is-clickable { cursor: pointer; }
+.el-card.is-clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent-ring);
+}
+.el-card.is-clickable:active { transform: scale(0.97); }
+.el-card--pad0 { padding: 0; }
+.el-card--tight { padding: 14px 16px; }
+
+.el-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  min-height: 28px;
+}
+.el-card-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-main);
+}
+.el-card-actions { margin-inline-start: auto; display: flex; align-items: center; gap: 8px; }
+
+/* Card whose head sits on its own hairline (tables, lists). */
+.el-card-head--ruled {
+  padding: 16px 20px;
+  margin: 0;
+  border-bottom: 1px solid var(--separator);
+}
+
+/* ---------------------------------------------------------------- grid ---- */
+.el-grid { display: grid; gap: 14px; }
+.el-grid--stats { grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); }
+.el-grid--2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.el-grid--3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+/* Stagger-in: widgets settle onto the page with a tiny cascade when a view
+   mounts (only transform/opacity — cheap, no layout thrash). */
+@keyframes el-rise {
+  from { opacity: 0; transform: translateY(10px) scale(0.99); }
+  to   { opacity: 1; transform: none; }
+}
+.el-grid--stats > *, .el-grid--2 > *, .el-grid--3 > *, .el-split > * {
+  animation: el-rise var(--dur-slow) var(--ease-out) backwards;
+}
+.el-grid--stats > *:nth-child(1) { animation-delay: 0ms; }
+.el-grid--stats > *:nth-child(2) { animation-delay: 45ms; }
+.el-grid--stats > *:nth-child(3) { animation-delay: 90ms; }
+.el-grid--stats > *:nth-child(4) { animation-delay: 135ms; }
+.el-grid--stats > *:nth-child(5) { animation-delay: 180ms; }
+.el-grid--stats > *:nth-child(6) { animation-delay: 225ms; }
+.el-grid--2 > *:nth-child(2), .el-grid--3 > *:nth-child(2), .el-split > *:nth-child(2) { animation-delay: 70ms; }
+.el-grid--2 > *:nth-child(3), .el-grid--3 > *:nth-child(3), .el-split > *:nth-child(3) { animation-delay: 140ms; }
+@media (prefers-reduced-motion: reduce) {
+  .el-grid--stats > *, .el-grid--2 > *, .el-grid--3 > *, .el-split > * { animation: none; }
+}
+/* The dashboard's chart row: a wide panel and a narrow one, collapsing together. */
+.el-split { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 14px; }
+@media (max-width: 1180px) { .el-split { grid-template-columns: minmax(0, 1fr); } }
+
+/* --------------------------------------------------------------- stats ---- */
+/* The reference's KPI card: icon-chip head, big figure, delta foot, and a
+   sparkbar strip in the corner. Gradient surface: accent light entering from
+   the top-left corner. */
+.el-stat {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, var(--accent-soft) 0%, transparent 42%),
+    var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.el-stat-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.el-stat-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.el-stat-spark {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 26px;
+}
+.el-stat-spark > i {
+  width: 7px;
+  border-radius: 3px;
+  background: var(--accent);
+  opacity: 0.85;
+  display: block;
+}
+.el-stat-more {
+  margin-inline-start: auto;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+}
+.el-stat-more:hover { background: var(--surface-hover); color: var(--text-main); }
+
+/* The KPI widget is interactive: hover lifts it, press-and-hold sinks it and
+   sweeps the sheen (same physics as .el-card, tuned for the smaller tile). */
+.el-stat {
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out);
+}
+.el-stat:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-ring);
+  box-shadow: var(--shadow-md);
+}
+.el-stat:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: var(--shadow-sm);
+}
+.el-stat:active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.12) 48%, transparent 66%);
+  animation: el-sheen 0.55s var(--ease-out) forwards;
+  pointer-events: none;
+}
+/* Sparkbars come alive on hover: each bar eases up to full height, with a
+   per-bar delay so the strip WIPES in like a wave. */
+.el-stat-spark > i {
+  transition: height var(--dur-slow) var(--ease-spring), opacity var(--dur) var(--ease-out);
+}
+.el-stat:hover .el-stat-spark > i { opacity: 1; }
+.el-stat-spark > i:nth-child(2) { transition-delay: 30ms; }
+.el-stat-spark > i:nth-child(3) { transition-delay: 60ms; }
+.el-stat-spark > i:nth-child(4) { transition-delay: 90ms; }
+.el-stat-spark > i:nth-child(5) { transition-delay: 120ms; }
+.el-stat-spark > i:nth-child(6) { transition-delay: 150ms; }
+.el-stat-spark > i:nth-child(7) { transition-delay: 180ms; }
+.el-stat-label {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.el-stat-value {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: var(--tracking-tighter);
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.el-stat-foot { display: flex; align-items: baseline; gap: 6px; font-size: var(--fs-footnote); }
+.el-stat-note { color: var(--text-tertiary); font-weight: 500; }
+
+/* Delta chip. Green/red is the SIGN, never the metric: a falling return rate is
+   good news, so the caller says which way is up rather than the chip guessing. */
+.el-delta { font-weight: 700; font-variant-numeric: tabular-nums; }
+.el-delta.up { color: var(--success); }
+.el-delta.down { color: var(--error); }
+.el-delta.flat { color: var(--text-tertiary); }
+
+/* --------------------------------------------------------------- pills ---- */
+/* The mockup's control chrome: a white pill with a hairline and a chevron.
+   Used for the date range, the store filter and every inline dropdown. */
+.el-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 9px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.el-pill:hover { border-color: var(--text-tertiary); }
+.el-pill:focus-visible { outline: 2px solid var(--accent-ring); outline-offset: 1px; }
+.el-pill > svg { color: var(--text-muted); flex-shrink: 0; }
+.el-pill--muted { color: var(--text-muted); font-weight: 600; }
+.el-pill--ghost { background: transparent; border-color: transparent; }
+.el-pill--ghost:hover { background: var(--surface-hover); border-color: transparent; }
+
+/* A <select> wearing the pill. Native menu, mockup chrome. */
+select.el-pill {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-inline-end: 28px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+                    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+  background-position: right 13px center, right 8px center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+[dir="rtl"] select.el-pill { background-position: left 13px center, left 8px center; }
+
+/* ------------------------------------------------------------- buttons ---- */
+.el-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.el-btn:focus-visible { outline: 2px solid var(--accent-ring); outline-offset: 1px; }
+.el-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+/* Buttons join the alive feel: press compresses. */
+.el-btn:active:not(:disabled) { transform: scale(0.97); }
+.el-btn { transition: transform var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
+
+/* ------------------------------------------------------- alive: ripple ----
+   Press-and-hold ripple for ROW widgets (table rows, list rows, nav tiles):
+   an accent wash expands from the press point. Pure CSS — the element is its
+   own trigger, `ripple` marks the participant, `:active` starts the wave.
+   Falls back silently on non-interactive rows (pointer-events none). */
+.el-ripple { position: relative; overflow: hidden; }
+.el-ripple:active::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 50%, var(--accent-ring) 0%, transparent 65%);
+  animation: el-ripple 0.7s var(--ease-out) forwards;
+  pointer-events: none;
+}
+@keyframes el-ripple {
+  from { transform: scale(0.4); opacity: 0.9; }
+  to   { transform: scale(1.6); opacity: 0; }
+}
+/* Rows dip while held, like the cards. */
+.el-ripple:active { transform: scale(0.995); }
+
+/* --------------------------------------------------------- list rows ------ */
+/* The reference's category rows: icon chip, texts, meter, status chip — one
+   clickable strip that lifts on hover and dips on hold. */
+.el-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.el-row:hover { background: var(--surface-hover); }
+.el-row.is-clickable { cursor: pointer; }
+.el-row.is-clickable:hover { border-color: var(--border-light); background: var(--surface-2); }
+.el-row-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.el-row-texts { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 1px; }
+.el-row-title {
+  font-size: var(--fs-callout);
+  font-weight: 700;
+  color: var(--text-main);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.el-row-sub {
+  font-size: var(--fs-footnote);
+  color: var(--text-muted);
+  font-weight: 500;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.el-row-end { margin-inline-start: auto; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+.el-btn--primary { background: var(--accent); color: var(--text-on-accent); }
+.el-btn--primary:hover:not(:disabled) { background: var(--accent-hover); }
+.el-btn--primary:active:not(:disabled) { background: var(--accent-press); }
+
+.el-btn--secondary { background: var(--surface); border-color: var(--border-light); color: var(--text-main); }
+.el-btn--secondary:hover:not(:disabled) { background: var(--surface-hover); }
+
+.el-btn--ghost { background: transparent; color: var(--text-muted); }
+.el-btn--ghost:hover:not(:disabled) { background: var(--surface-hover); color: var(--text-main); }
+
+.el-btn--danger { background: var(--error-soft); color: var(--error); }
+.el-btn--danger:hover:not(:disabled) { background: var(--error); color: #fff; }
+
+.el-btn--lg { height: 44px; padding: 0 20px; font-size: var(--fs-body); border-radius: 11px; }
+.el-btn--block { width: 100%; }
+
+/* Square icon-only button. */
+.el-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.el-icon-btn:hover { background: var(--surface-hover); color: var(--text-main); }
+.el-icon-btn:focus-visible { outline: 2px solid var(--accent-ring); outline-offset: 1px; }
+.el-icon-btn--bordered { border-color: var(--border-light); background: var(--surface); }
+
+/* -------------------------------------------------------------- inputs ---- */
+.el-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.el-label {
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.el-input,
+.el-select,
+.el-textarea {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: var(--fs-callout);
+  font-weight: 500;
+  box-sizing: border-box;
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+.el-textarea { height: auto; min-height: 84px; padding: 10px 12px; resize: vertical; line-height: 1.5; }
+.el-input::placeholder, .el-textarea::placeholder { color: var(--text-tertiary); font-weight: 500; }
+.el-input:focus, .el-select:focus, .el-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-ring);
+}
+.el-input:disabled, .el-select:disabled { background: var(--surface-2); color: var(--text-tertiary); cursor: not-allowed; }
+.el-input.is-error, .el-select.is-error { border-color: var(--error); }
+.el-error-text { font-size: var(--fs-footnote); color: var(--error); font-weight: 600; }
+.el-hint { font-size: var(--fs-footnote); color: var(--text-tertiary); font-weight: 500; line-height: 1.45; }
+.el-input[type="number"], .el-input.tabular { font-variant-numeric: tabular-nums; }
+
+/* Search box with a leading magnifier — the POS and every list use this. */
+.el-search { position: relative; display: flex; align-items: center; min-width: 0; }
+.el-search > svg {
+  position: absolute;
+  inset-inline-start: 12px;
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+.el-search > input {
+  width: 100%;
+  height: 38px;
+  padding-inline: 36px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: var(--fs-callout);
+  box-sizing: border-box;
+}
+.el-search > input::placeholder { color: var(--text-tertiary); }
+.el-search > input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
+
+.el-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-callout);
+  font-weight: 500;
+  color: var(--text-main);
+  cursor: pointer;
+}
+.el-checkbox input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+
+/* ---------------------------------------------------------------- tabs ---- */
+/* Underline tabs — the product detail's Général / Variants / Stock row. */
+.el-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid var(--separator);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  /* Belt and braces alongside `.el-page > * { flex-shrink: 0 }`: a tab bar you
+     cannot reach is a screen you cannot leave. */
+  flex-shrink: 0;
+  min-height: 40px;
+}
+.el-tabs::-webkit-scrollbar { display: none; }
+.el-tab {
+  position: relative;
+  padding: 10px 14px 12px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: var(--fs-callout);
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.el-tab:hover { color: var(--text-main); }
+.el-tab.active { color: var(--accent); }
+.el-tab.active::after {
+  content: "";
+  position: absolute;
+  inset-inline: 10px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--accent);
+}
+
+/* Segmented control — the Produits list's Tous / Actif / Inactif. */
+.el-segmented {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--bg-deep);
+}
+.el-seg {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.el-seg:hover { color: var(--text-main); }
+.el-seg.active { background: var(--surface); color: var(--text-main); box-shadow: var(--shadow-sm); }
+
+/* --------------------------------------------------------------- chips ---- */
+.el-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: var(--r-full);
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.el-chip--ok { background: var(--success-soft); color: var(--success); }
+.el-chip--warn { background: var(--warning-soft); color: var(--warning); }
+.el-chip--bad { background: var(--error-soft); color: var(--error); }
+.el-chip--accent { background: var(--accent-soft); color: var(--accent); }
+.el-chip--neutral { background: var(--bg-deep); color: var(--text-muted); }
+
+/* --------------------------------------------------------------- table ---- */
+.el-table-wrap { width: 100%; overflow-x: auto; }
+.el-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-small);
+}
+.el-table th {
+  text-align: start;
+  padding: 10px 16px;
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--separator);
+  white-space: nowrap;
+  background: transparent;
+}
+.el-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--separator);
+  color: var(--text-main);
+  font-weight: 500;
+  vertical-align: middle;
+}
+.el-table tbody tr:last-child td { border-bottom: none; }
+.el-table tbody tr { transition: background var(--dur-fast) var(--ease-out); }
+.el-table tbody tr:hover { background: var(--surface-hover); }
+.el-table tbody tr.is-clickable { cursor: pointer; }
+.el-table .num { text-align: end; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.el-table .strong { font-weight: 700; }
+.el-table .muted { color: var(--text-muted); }
+[dir="rtl"] .el-table .num { text-align: start; }
+
+/* Product cell: thumbnail + name, used in every list that shows an article. */
+.el-cell-product { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.el-cell-product > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+
+.el-table-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--separator);
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.el-table-foot .el-page-actions { margin-inline-start: auto; }
+
+/* ------------------------------------------------------------ thumbnail --- */
+/* Product photo, or the tinted glyph that stands in until one is uploaded.
+   A grey void where the mockup shows a garment makes the whole screen read as
+   unfinished, so the fallback is a designed state, not an empty box. */
+.el-thumb {
+  --thumb-size: 36px;
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  flex-shrink: 0;
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--bg-deep);
+  display: grid;
+  place-items: center;
+  color: var(--text-tertiary);
+  border: 1px solid var(--border-light);
+}
+.el-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.el-thumb--lg { --thumb-size: 56px; border-radius: 11px; }
+
+/* Colour swatch beside a variant's colour name. */
+.el-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: 1px solid var(--border-light);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+/* ---------------------------------------------------------------- misc ---- */
+.el-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 56px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-callout);
+}
+.el-empty-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.el-empty strong { color: var(--text-main); font-size: var(--fs-body); font-weight: 700; }
+
+.el-bar-track { height: 6px; border-radius: 3px; background: var(--bg-deep); overflow: hidden; }
+.el-bar-fill { height: 100%; border-radius: 3px; background: var(--accent); }
+
+.el-divider { height: 1px; background: var(--separator); border: none; margin: 0; }
+
+.el-money { font-variant-numeric: tabular-nums; letter-spacing: var(--tracking-tight); }
+
+/* Legend for a donut/bar — dot, label, value, in one tight column. */
+.el-legend { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.el-legend-row { display: flex; align-items: center; gap: 8px; font-size: var(--fs-footnote); }
+.el-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.el-legend-row > span:first-of-type { color: var(--text-muted); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.el-legend-row > strong { margin-inline-start: auto; color: var(--text-main); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* -------------------------------------------------------------- modals ---- */
+.el-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: var(--scrim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: el-fade var(--dur-fast) var(--ease-out);
+}
+.el-modal {
+  background: var(--surface);
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-float);
+  width: min(560px, 100%);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: el-rise var(--dur) var(--ease-out);
+}
+.el-modal--wide { width: min(920px, 100%); }
+.el-modal-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--separator);
+  flex-shrink: 0;
+}
+.el-modal-head h2 { margin: 0; font-size: var(--fs-title3); font-weight: 700; letter-spacing: var(--tracking-tight); }
+.el-modal-head .el-modal-x { margin-inline-start: auto; }
+.el-modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+.el-modal-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--separator);
+  background: var(--surface-2);
+  flex-shrink: 0;
+}
+.el-modal-foot .el-spacer { margin-inline-start: auto; }
+@keyframes el-fade { from { opacity: 0; } }
+@keyframes el-rise { from { opacity: 0; transform: translateY(8px); } }
+@media (prefers-reduced-motion: reduce) {
+  .el-modal-overlay, .el-modal { animation: none; }
+}
+
+/* ---------------------------------------------------------- product thumb --- */
+/* See ProductThumb.tsx. The tints are decoration that makes a wall of
+   placeholders scannable; they never carry meaning, which is why they are
+   derived from the id rather than from any property of the garment. */
+.pthumb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--pthumb-bg, var(--bg-deep));
+  color: var(--pthumb-ink, var(--text-tertiary));
+  border: 1px solid var(--border-light);
+  box-sizing: border-box;
+}
+.pthumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Glyph behind, initials in front — the glyph says "garment", the initials say
+   WHICH garment. */
+.pthumb-glyph {
+  position: absolute;
+  width: 62%;
+  height: 62%;
+  opacity: 0.32;
+}
+.pthumb-initials {
+  position: relative;
+  font-size: 0.62em;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.pthumb--t0 { --pthumb-bg: #EEF0FB; --pthumb-ink: #5B57E8; }
+.pthumb--t1 { --pthumb-bg: #FDF0E8; --pthumb-ink: #C2410C; }
+.pthumb--t2 { --pthumb-bg: #E7F5F3; --pthumb-ink: #0F766E; }
+.pthumb--t3 { --pthumb-bg: #FAF3E0; --pthumb-ink: #A16207; }
+.pthumb--t4 { --pthumb-bg: #E8F4FC; --pthumb-ink: #0369A1; }
+.pthumb--t5 { --pthumb-bg: #EFF5E4; --pthumb-ink: #4D7C0F; }
+.pthumb--t6 { --pthumb-bg: #F2EDFC; --pthumb-ink: #6D28D9; }
+.pthumb--t7 { --pthumb-bg: #FCEEF4; --pthumb-ink: #BE185D; }
+
+:root[data-theme='dark'] .pthumb--t0 { --pthumb-bg: #1E1D33; --pthumb-ink: #A5A2FA; }
+:root[data-theme='dark'] .pthumb--t1 { --pthumb-bg: #2E1D12; --pthumb-ink: #FDBA74; }
+:root[data-theme='dark'] .pthumb--t2 { --pthumb-bg: #102724; --pthumb-ink: #5EEAD4; }
+:root[data-theme='dark'] .pthumb--t3 { --pthumb-bg: #2A2210; --pthumb-ink: #FDE047; }
+:root[data-theme='dark'] .pthumb--t4 { --pthumb-bg: #10222E; --pthumb-ink: #7DD3FC; }
+:root[data-theme='dark'] .pthumb--t5 { --pthumb-bg: #1B2611; --pthumb-ink: #BEF264; }
+:root[data-theme='dark'] .pthumb--t6 { --pthumb-bg: #221A33; --pthumb-ink: #C4B5FD; }
+:root[data-theme='dark'] .pthumb--t7 { --pthumb-bg: #2D1424; --pthumb-ink: #F9A8D4; }
+
+/* ------------------------------------------------------------ RTL money --- */
+/* An amount and its unit are one LTR run even inside an Arabic sentence.
+   Without isolation the bidi algorithm reorders "35 000 DA" into "DA 35 000"
+   — or worse, splits the unit off a negative sign — because the surrounding
+   paragraph direction wins over a neutral-looking string.
+
+   `unicode-bidi: isolate` keeps the run intact; `direction: ltr` keeps the
+   digits and the unit in the order the shop reads prices in. The BOX still
+   aligns with the parent, so the column stays right-aligned in Arabic. */
+[dir="rtl"] .el-money,
+[dir="rtl"] .el-stat-value,
+[dir="rtl"] .el-table .num,
+[dir="rtl"] .el-legend-row > strong,
+[dir="rtl"] [data-money] {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+/* A right-aligned numeric column must stay right-aligned once isolated. */
+[dir="rtl"] .el-table .num { text-align: left; }

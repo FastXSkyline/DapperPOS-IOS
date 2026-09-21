@@ -1,0 +1,194 @@
+/* Objectifs de vente — Elegance palette (src/styles/tokens.css). */
+
+.tgt {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.tgt-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.tgt-head h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: var(--fs-callout);
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.tgt-head svg { color: var(--accent); }
+
+.tgt-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: none;
+    background: var(--accent);
+    color: var(--text-on-accent);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.tgt-primary:hover:not(:disabled) { background: var(--accent-hover); }
+.tgt-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.tgt-error,
+.tgt-gap {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    font-size: var(--fs-footnote);
+    line-height: 1.45;
+}
+
+.tgt-error { color: var(--error); font-weight: 600; }
+.tgt-gap { color: var(--text-muted); }
+.tgt-gap strong { color: var(--text-main); font-variant-numeric: tabular-nums; }
+
+.tgt-empty { margin: 0; padding: 14px 0; color: var(--text-muted); font-size: var(--fs-small); }
+
+/* --- Editor ------------------------------------------------------------- */
+
+.tgt-form {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    padding: 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+.tgt-form label { display: flex; flex-direction: column; gap: 4px; min-width: 140px; }
+
+.tgt-form span {
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.tgt-form select,
+.tgt-form input {
+    padding: 8px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}
+
+.tgt-form input[type='number'] { text-align: right; font-variant-numeric: tabular-nums; }
+
+.tgt-form select:focus,
+.tgt-form input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+/* --- Progress list ------------------------------------------------------ */
+
+.tgt-list { display: flex; flex-direction: column; gap: 14px; margin: 0; padding: 0; list-style: none; }
+
+.tgt-list li { display: flex; flex-direction: column; gap: 6px; }
+
+.tgt-row-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.tgt-row-head strong { font-size: var(--fs-small); color: var(--text-main); }
+
+.tgt-scope {
+    margin-left: 8px;
+    padding: 1px 7px;
+    border-radius: var(--r-full);
+    background: var(--bg-deep);
+    color: var(--text-muted);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+}
+
+.tgt-figures { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.tgt-figures strong { font-size: var(--fs-callout); color: var(--text-main); }
+.tgt-figures span { font-size: var(--fs-footnote); color: var(--text-muted); }
+
+.tgt-bar {
+    position: relative;
+    height: 8px;
+    background: var(--bg-deep);
+    border-radius: var(--r-full);
+    overflow: visible;
+}
+
+.tgt-bar i {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    border-radius: var(--r-full);
+    transition: width var(--dur) var(--ease-out);
+}
+
+/* Where the period should be if progress were linear. Without this marker a bar
+   at 55 % is unreadable — excellent on day 10, alarming on day 28. */
+.tgt-pace {
+    position: absolute;
+    top: -3px;
+    width: 2px;
+    height: 14px;
+    background: var(--text-main);
+    border-radius: 1px;
+    transform: translateX(-1px);
+}
+
+.tgt-list li.done i { background: var(--success); }
+.tgt-list li.behind i { background: var(--warning); }
+
+.tgt-row-foot {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: var(--fs-caption);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.tgt-row-foot > span:first-child { font-weight: 700; color: var(--text-main); }
+.tgt-hit { color: var(--success); font-weight: 700; }
+.tgt-late { color: var(--warning); font-weight: 700; }
+
+.tgt-icon {
+    margin-left: auto;
+    display: inline-flex;
+    padding: 4px;
+    border: none;
+    background: none;
+    border-radius: var(--r-xs);
+    color: var(--text-tertiary);
+    cursor: pointer;
+}
+
+.tgt-icon:hover { background: var(--surface-hover); color: var(--error); }

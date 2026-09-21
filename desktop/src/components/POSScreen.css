@@ -1,0 +1,536 @@
+/* ============================================================
+   POS — the till, from the approved mockup.
+
+   Two columns that never scroll together: the catalogue scrolls, the cart does
+   not move. That is the whole ergonomic point of a till — the total and the
+   pay button must be in the same place at the end of every sale, whatever is
+   in the basket.
+
+   The screen owns its own scrolling (App.tsx puts `.is-fixed` on the canvas
+   for this view), because a page-level scrollbar would carry the cart off the
+   bottom of a busy sale.
+   ============================================================ */
+
+.pos-screen {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 356px;
+  gap: 0;
+  /* Flex child of .main-content, which is a column with the topbar above. */
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+  background: var(--bg-main);
+}
+
+/* ------------------------------------------------------------ catalogue --- */
+.pos-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 18px 20px 0;
+  gap: 14px;
+}
+
+.pos-topbar { display: flex; align-items: center; gap: 10px; }
+
+/* The scan field is the default focus and stays the widest thing on the row:
+   the till is driven by a barcode gun far more often than by touch. */
+.pos-search { flex: 1 1 auto; min-width: 0; }
+.pos-search > input { height: 42px; font-size: var(--fs-body); }
+
+.pos-customer {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 9px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: var(--fs-callout);
+  font-weight: 500;
+  cursor: pointer;
+  flex-shrink: 0;
+  max-width: 250px;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.pos-customer:hover { border-color: var(--text-tertiary); }
+.pos-customer.is-set { color: var(--text-main); font-weight: 600; border-color: var(--accent); background: var(--accent-soft); }
+.pos-customer > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pos-customer-x {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------- category row --- */
+.pos-cats {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.pos-cats::-webkit-scrollbar { display: none; }
+
+.pos-cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 78px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.pos-cat-tile {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  transition: border-color var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
+}
+.pos-cat:hover .pos-cat-tile { border-color: var(--text-tertiary); }
+.pos-cat.active .pos-cat-tile {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-on-accent);
+}
+.pos-cat-name {
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  color: var(--text-muted);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pos-cat.active .pos-cat-name { color: var(--accent); }
+.pos-cat:focus-visible .pos-cat-tile { outline: 2px solid var(--accent-ring); outline-offset: 2px; }
+
+/* --------------------------------------------------------------- grid ----- */
+.pos-grid-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 20px;
+  margin-inline: -4px;
+  padding-inline: 4px;
+}
+
+.pos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(154px, 1fr));
+  gap: 12px;
+  align-content: start;
+}
+
+.pos-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  text-align: start;
+  font-family: inherit;
+  transition: border-color var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+}
+/* A tile IS a button, so it may move — cards that only display do not. */
+.pos-card:hover { border-color: var(--accent); box-shadow: var(--shadow-md); }
+.pos-card:active { transform: scale(0.985); }
+.pos-card:focus-visible { outline: 2px solid var(--accent-ring); outline-offset: 2px; }
+
+.pos-card-img {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--bg-deep);
+  overflow: hidden;
+}
+.pos-card-img .pthumb { border: none; border-radius: 0; font-size: 40px; }
+
+/* Out of stock is a LABEL on a still-usable tile: the size picker behind it
+   shows which combinations are finished, and a dead tile just makes staff go
+   and ask the manager. */
+.pos-card-flag {
+  position: absolute;
+  inset-block-start: 8px;
+  inset-inline-start: 8px;
+  padding: 2px 8px;
+  border-radius: var(--r-full);
+  background: var(--error);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+}
+.pos-card.is-out .pos-card-img { opacity: 0.55; }
+
+.pos-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px 12px;
+  min-width: 0;
+}
+.pos-card-name {
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.3;
+  /* Two lines then ellipsis: "Costume Milano Bleu Marine" must not push the
+     price out of alignment with the tile beside it. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.6em;
+}
+.pos-card-price {
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- cart ---- */
+.pos-cart {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--surface);
+  border-inline-start: 1px solid var(--separator);
+}
+
+.pos-cart-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--separator);
+  flex-shrink: 0;
+}
+.pos-cart-head h2 {
+  margin: 0;
+  font-size: var(--fs-title3);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}
+.pos-cart-count {
+  margin-inline-start: auto;
+  font-size: var(--fs-footnote);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.pos-cart-lines {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.pos-cart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 52px 24px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: var(--fs-footnote);
+}
+.pos-cart-empty > svg { color: var(--text-tertiary); }
+.pos-cart-empty strong { color: var(--text-main); font-size: var(--fs-callout); }
+
+.pos-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--separator);
+}
+.pos-line:last-child { border-bottom: none; }
+
+.pos-line-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.pos-line-name {
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* The size and colour are the thing the cashier double-checks against what is
+   in their hand, so they get their own line rather than a parenthesis. */
+.pos-line-variant {
+  font-size: var(--fs-footnote);
+  color: var(--accent);
+  font-weight: 600;
+}
+.pos-line-unit {
+  font-size: var(--fs-footnote);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.pos-line-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+.pos-line-total {
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.pos-qty { display: flex; align-items: center; gap: 2px; }
+.pos-qty > button {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.pos-qty > button:hover { background: var(--surface-hover); color: var(--text-main); }
+.pos-qty > span {
+  min-width: 22px;
+  text-align: center;
+  font-size: var(--fs-footnote);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.pos-qty-x { border-color: transparent !important; }
+.pos-qty-x:hover { background: var(--error-soft) !important; color: var(--error) !important; }
+
+/* ----------------------------------------------------------- cart foot ---- */
+.pos-cart-foot {
+  flex-shrink: 0;
+  padding: 14px 18px 18px;
+  border-top: 1px solid var(--separator);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Warnings sit above the total, never under the pay button. */
+.pos-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 11px;
+  border-radius: 9px;
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.pos-note > svg { flex-shrink: 0; }
+.pos-note.is-accent { background: var(--accent-soft); color: var(--accent); }
+.pos-note.is-warn { background: var(--warning-soft); color: var(--warning); }
+.pos-note.is-error { background: var(--error-soft); color: var(--error); }
+.pos-note button {
+  margin-inline-start: auto;
+  border: none;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border-radius: 7px;
+  padding: 3px 10px;
+  font-family: inherit;
+  font-size: var(--fs-footnote);
+  font-weight: 700;
+  cursor: pointer;
+}
+.pos-note strong, .pos-note small { margin-inline-start: auto; }
+
+.pos-discount { display: flex; align-items: center; gap: 8px; }
+.pos-discount-label {
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.pos-discount-mode { margin-inline-start: auto; flex-shrink: 0; }
+.pos-discount-mode .el-seg { padding: 5px 10px; }
+.pos-discount-input {
+  width: 84px;
+  height: 32px;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.pos-sum {
+  display: flex;
+  align-items: baseline;
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}
+.pos-sum > strong {
+  margin-inline-start: auto;
+  color: var(--text-main);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.pos-sum > strong.is-cut { color: var(--success); }
+
+.pos-total {
+  display: flex;
+  align-items: baseline;
+  padding-top: 10px;
+  border-top: 1px solid var(--separator);
+}
+.pos-total > span { font-size: var(--fs-headline); font-weight: 600; color: var(--text-main); }
+.pos-total > strong {
+  margin-inline-start: auto;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: var(--tracking-tighter);
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
+}
+
+.pos-methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.pos-method {
+  height: 38px;
+  border-radius: 9px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
+}
+.pos-method:hover { border-color: var(--text-tertiary); color: var(--text-main); }
+.pos-method.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.pos-method:focus-visible { outline: 2px solid var(--accent-ring); outline-offset: 1px; }
+
+.pos-pay { height: 48px; font-size: var(--fs-headline); font-weight: 700; }
+.pos-void { height: 32px; font-size: var(--fs-footnote); }
+
+/* --------------------------------------------------------- narrow rigs ---- */
+/* 1366×768 shop machines: the cart narrows before the grid does, because a
+   two-column product grid is still usable and a 240px cart is not. */
+@media (max-width: 1180px) {
+  .pos-screen { grid-template-columns: minmax(0, 1fr) 310px; }
+  .pos-grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
+}
+
+/* -------------------------------------------------------- variant picker -- */
+.variant-picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: var(--scrim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.variant-picker {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  box-shadow: var(--shadow-float);
+  padding: 22px;
+  width: min(560px, 100%);
+  max-height: 86vh;
+  overflow-y: auto;
+}
+.variant-picker h3 {
+  margin: 0 0 4px;
+  font-size: var(--fs-title3);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}
+.variant-picker-hint { margin: 0 0 18px; font-size: var(--fs-small); color: var(--text-muted); }
+
+.variant-picker-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.variant-picker-size {
+  min-width: 44px;
+  padding-top: 9px;
+  font-size: var(--fs-callout);
+  font-weight: 800;
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
+}
+.variant-picker-options { display: flex; flex-wrap: wrap; gap: 7px; flex: 1; }
+.variant-picker-options > button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  min-width: 84px;
+  padding: 8px 11px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  font-family: inherit;
+  cursor: pointer;
+  text-align: start;
+  transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.variant-picker-options > button:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); }
+.variant-picker-options > button span { font-size: var(--fs-small); font-weight: 600; color: var(--text-main); }
+.variant-picker-options > button small { font-size: var(--fs-footnote); color: var(--text-muted); }
+/* Finished sizes stay VISIBLE but unselectable — staff must be able to see that
+   the size exists and is simply sold out, not assume it was never stocked. */
+.variant-picker-options > button:disabled { opacity: 0.42; cursor: not-allowed; }
+.variant-picker-options > button:disabled small { color: var(--error); }
+
+.variant-picker-actions { display: flex; justify-content: flex-end; margin-top: 6px; }
+.variant-picker-actions > button {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 9px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  cursor: pointer;
+}
+.variant-picker-actions > button:hover { background: var(--surface-hover); }
+
+/* A family that has its own picture shows it edge to edge; the glyph tile is
+   only the fallback. The active ring stays outside the image so the selection
+   is still visible over a dark photo. */
+.pos-cat-tile.has-img { padding: 0; overflow: hidden; background: var(--bg-deep); }
+.pos-cat-tile.has-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pos-cat.active .pos-cat-tile.has-img {
+  background: var(--bg-deep);
+  box-shadow: 0 0 0 2px var(--accent);
+}

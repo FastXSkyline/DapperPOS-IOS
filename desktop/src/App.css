@@ -1,0 +1,440 @@
+/* ============================================================
+   Dapper — application shell ("Console" restyle).
+
+   The reference shell: a near-black canvas edge-to-edge, a slim icon rail
+   pinned left, a quiet top strip with search / avatar, and content floating
+   as rounded panels with soft sheens.
+
+   Theme colours are UNCHANGED: every colour below is a token from
+   styles/tokens.css, so light/dark and the indigo accent keep working, and
+   the POS/product screens (built on el-* classes) keep their exact look.
+   ============================================================ */
+
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: var(--bg-deep);
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* ------------------------------------------------------------- sidebar ---- */
+/* A slim icon rail with the labels hidden — the reference's left edge — with
+   hover flyouts carrying the label so nothing becomes unfindable. */
+.sidebar {
+  width: 64px;
+  flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border-inline-end: 1px solid var(--separator);
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  position: relative;
+  transition: width var(--dur) var(--ease-out);
+}
+/* Expanded state still exists (brand toggle) — widened rail with labels. */
+.sidebar.is-expanded { width: 218px; }
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 12px;
+  min-height: 58px;
+  box-sizing: border-box;
+  /* Inset hairline under the brand — the nav starts on its own shelf, the
+     same way the footer is separated. */
+  box-shadow: inset 0 -1px 0 var(--separator);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: start;
+  color: var(--text-main);
+}
+.sidebar-brand-glyph {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow-accent);
+}
+.sidebar-brand-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.sidebar-brand-text > .wordmark { color: var(--text-main); }
+.sidebar-brand-text > small {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  line-height: 1;
+}
+.sidebar:not(.is-expanded) .sidebar-brand-text { display: none; }
+.sidebar-collapse {
+  margin-inline-start: auto;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.sidebar:not(.is-expanded) .sidebar-collapse { display: none; }
+
+/* --------------------------------------------------------------- nav ------ */
+.nav-items {
+  flex: 1;
+  padding: 4px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.sidebar.is-expanded .nav-items { align-items: stretch; }
+.nav-items::-webkit-scrollbar { width: 0; }
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  width: 44px;
+  height: 42px;
+  padding: 0;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  text-align: start;
+  line-height: 1.25;
+  box-sizing: border-box;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out);
+}
+.sidebar.is-expanded .nav-item {
+  width: 100%;
+  height: auto;
+  justify-content: flex-start;
+  padding: 9px 12px;
+}
+.nav-item .icon { flex-shrink: 0; display: flex; align-items: center; justify-content: center; width: 18px; }
+.nav-item > span:not(.icon) { display: none; }
+.sidebar.is-expanded .nav-item > span:not(.icon) { flex: 1; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Expanded rail: the icon sits in its own quiet chip — an aligned tap column
+   that echoes the dashboard's accent icon chips. */
+.sidebar.is-expanded .nav-item .icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--bg-deep);
+  margin-inline-end: 2px;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+/* Touch feedback on the rail itself: hover raises the tile a pixel, the
+   press compresses it — the widgets' tactile language carried into the menu. */
+.nav-item:not(.active):hover { color: var(--text-main); background: var(--surface-hover); transform: translateY(-1px); }
+.nav-item:active { transform: scale(0.94); }
+
+/* Hover flyout — the label survives outside the rail. */
+.sidebar:not(.is-expanded) .nav-item:hover::after {
+  content: attr(data-label);
+  position: absolute;
+  inset-inline-start: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-float);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  white-space: nowrap;
+  z-index: 200;
+  pointer-events: none;
+}
+.nav-item:focus-visible { outline: 2px solid var(--accent-ring); outline-offset: -2px; }
+
+/* ACTIVE TAB — the reference's glowing edge look, pushed further: the whole
+   tile is a wide rounded lozenge hugging the rail's edge; a HOT GLOWING BAR
+   sits flush on the tile's inline-start edge (not floating outside it), with
+   the accent glow blooming over the tile like light spilling from the bar.
+   Icon lit, label bright. Reads at a glance from across the counter. */
+.nav-item.active {
+  background:
+    linear-gradient(135deg, var(--accent-soft) 0%, transparent 55%),
+    var(--surface-hover);
+  color: var(--text-main);
+  font-weight: 700;
+  box-shadow:
+    inset 0 0 0 1px var(--accent-ring),
+    0 0 22px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 62%;
+  border-radius: 0 4px 4px 0;
+  background: var(--accent);
+  box-shadow:
+    0 0 10px var(--accent),
+    0 0 26px var(--accent-ring),
+    0 0 44px var(--accent-ring);
+}
+[dir="rtl"] .nav-item.active::before { border-radius: 3px 0 0 3px; }
+.nav-item.active .icon { color: var(--accent); filter: drop-shadow(0 0 7px var(--accent-ring)); }
+.sidebar.is-expanded .nav-item.active .icon { background: var(--accent-soft); }
+.nav-item.active:active { transform: scale(0.96); }
+
+/* Section labels in the expanded rail (the reference's "Esp" header). */
+.nav-section {
+  padding: 14px 12px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+/* Rail mode: a section leaves a single quiet dot, so the grouping survives
+   without the labels. */
+.sidebar:not(.is-expanded) .nav-section { display: block; padding: 6px 0 1px; }
+.sidebar:not(.is-expanded) .nav-section::before {
+  content: "";
+  display: block;
+  width: 3px;
+  height: 3px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  opacity: 0.6;
+}
+
+.nav-badge {
+  position: absolute;
+  top: 4px;
+  inset-inline-end: 4px;
+  background: var(--error);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: var(--r-full);
+  min-width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.sidebar.is-expanded .nav-badge { position: static; margin-inline-start: auto; }
+.low-stock-badge {
+  background: var(--error);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: var(--r-full);
+  min-width: 16px;
+  text-align: center;
+  margin-inline-start: auto;
+}
+
+/* ------------------------------------------------------- sidebar footer --- */
+.sidebar-footer {
+  padding: 10px;
+  border-top: 1px solid var(--separator);
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+}
+.sidebar.is-expanded .sidebar-footer { justify-content: stretch; }
+
+.user-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: start;
+  font-family: inherit;
+  overflow: visible;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.sidebar.is-expanded .user-card {
+  width: 100%;
+  height: auto;
+  border-radius: 11px;
+  padding: 8px 10px;
+  justify-content: flex-start;
+}
+.user-card:hover { background: var(--surface-hover); border-color: var(--text-tertiary); }
+.user-card:focus-visible { outline: 2px solid var(--accent-ring); outline-offset: 1px; }
+.user-card > svg:last-child { display: none; color: var(--text-tertiary); flex-shrink: 0; margin-inline-start: auto; }
+.sidebar.is-expanded .user-card > svg:last-child { display: block; }
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: var(--text-main);
+  color: var(--surface);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+.user-card-text { display: none; flex-direction: column; min-width: 0; gap: 1px; }
+.sidebar.is-expanded .user-card-text { display: flex; }
+.user-card-name {
+  font-weight: 700;
+  font-size: var(--fs-footnote);
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.user-card-role {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------- main canvas --- */
+.main-content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background:
+    radial-gradient(900px 420px at 85% -10%, var(--aurora-1), transparent 60%),
+    radial-gradient(700px 380px at -10% 110%, var(--aurora-2), transparent 60%),
+    var(--bg-deep);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* A screen that manages its own scrolling (the POS) opts out. */
+.main-content.is-fixed { overflow: hidden; }
+
+/* ------------------------------------------------------------ topbar ------ */
+.app-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px;
+  min-height: 56px;
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  backdrop-filter: blur(10px) saturate(105%);
+  border-bottom: 1px solid var(--separator);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.app-topbar-title {
+  font-size: var(--fs-title3);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-main);
+  margin: 0;
+}
+.app-topbar-right { margin-inline-start: auto; display: flex; align-items: center; gap: 10px; }
+
+/* Top search field — the reference's rounded search, quiet and borderless. */
+.topbar-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 240px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  border: 1px solid var(--separator);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--fs-footnote);
+  font-weight: 500;
+  transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.topbar-search:hover { border-color: var(--border-light); color: var(--text-muted); }
+.topbar-search span { white-space: nowrap; }
+
+/* Floating avatar button in the top-right (the reference's round chip). */
+.topbar-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.topbar-avatar:hover { border-color: var(--accent-ring); transform: translateY(-1px); }
+
+/* -------------------------------------------------------- misc legacy ----- */
+.settings-view { padding: 24px 28px 32px; }
+.app-bg { background: transparent; }
+
+/* ---------------------------------------------------------------- boot ---- */
+.app-boot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: 100vh;
+  width: 100vw;
+  background: var(--bg-deep);
+  color: var(--text-main);
+}
+.app-boot > span {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  font-weight: 500;
+}

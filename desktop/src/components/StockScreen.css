@@ -1,0 +1,268 @@
+/* Stock — Elegance palette (src/styles/tokens.css). Data-dense back office. */
+
+.stock-screen {
+    padding: 24px 28px 40px;
+    overflow-y: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.stock-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.stock-header h1 {
+    margin: 0;
+    font-size: var(--fs-title1);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-main);
+}
+
+.stock-header p {
+    margin: 6px 0 0;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+}
+
+.stock-scope {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+.stock-scope svg { color: var(--text-tertiary); }
+
+.stock-scope select {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--text-main);
+    cursor: pointer;
+}
+
+.stock-scope select:focus { outline: none; }
+
+/* --- KPI row ------------------------------------------------------------ */
+
+.stock-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+}
+
+.stock-kpi {
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.stock-kpi span {
+    display: block;
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.stock-kpi strong {
+    display: block;
+    margin-top: 6px;
+    font-size: var(--fs-title2);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-main);
+}
+
+/* Dead stock is money the shop cannot get back yet — it earns the one accent. */
+.stock-kpi.alert strong { color: var(--warning); }
+
+/* --- Tabs --------------------------------------------------------------- */
+
+.stock-tabs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.stock-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.stock-tab:hover { background: var(--surface-hover); }
+
+.stock-tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--text-on-accent);
+}
+
+.stock-tab-count {
+    padding: 1px 7px;
+    border-radius: var(--r-full);
+    background: var(--bg-deep);
+    color: var(--text-muted);
+    font-size: var(--fs-caption);
+    font-variant-numeric: tabular-nums;
+}
+
+.stock-tab.active .stock-tab-count {
+    background: rgba(255, 255, 255, 0.22);
+    color: var(--text-on-accent);
+}
+
+.stock-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 210px;
+    padding: 0 12px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+.stock-search svg { color: var(--text-tertiary); flex-shrink: 0; }
+
+.stock-search input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 9px 0;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}
+
+.stock-search:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.stock-window {
+    display: inline-flex;
+    gap: 4px;
+    padding: 3px;
+    background: var(--bg-deep);
+    border-radius: var(--r-sm);
+}
+
+.stock-window button {
+    padding: 6px 11px;
+    border: none;
+    background: transparent;
+    border-radius: var(--r-xs);
+    font-family: inherit;
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.stock-window button.active {
+    background: var(--surface);
+    color: var(--text-main);
+    box-shadow: var(--shadow-sm);
+}
+
+/* --- Panel + table ------------------------------------------------------ */
+
+.stock-panel {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+}
+
+.stock-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-small);
+}
+
+.stock-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    text-align: left;
+    padding: 11px 14px;
+    background: var(--surface);
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-tertiary);
+    border-bottom: 1px solid var(--border-light);
+    white-space: nowrap;
+}
+
+.stock-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--separator);
+    color: var(--text-main);
+}
+
+.stock-table tbody tr:last-child td { border-bottom: none; }
+.stock-table tbody tr:hover { background: var(--surface-2); }
+
+.stock-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.stock-table .muted { color: var(--text-muted); }
+.stock-table .mono { font-variant-numeric: tabular-nums; }
+.stock-table .warn { color: var(--warning); font-weight: 600; }
+.stock-table .never { color: var(--warning); font-weight: 600; }
+.stock-table .neg { color: var(--error); font-weight: 600; }
+.stock-table .pos { color: var(--success); font-weight: 600; }
+
+/* --- States ------------------------------------------------------------- */
+
+.stock-state {
+    padding: 44px 24px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+}
+
+.stock-state.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.stock-state.empty svg { color: var(--text-tertiary); }
+.stock-state.empty h3 { margin: 6px 0 0; font-size: var(--fs-headline); color: var(--text-main); }
+.stock-state.empty p { margin: 0; max-width: 48ch; line-height: 1.5; }
+
+@media (max-width: 900px) {
+    .stock-screen { padding: 18px 16px 32px; }
+    .stock-table { min-width: 760px; }
+}

@@ -1,0 +1,126 @@
+/* Poste de travail — shop + identity, in one sheet. See UserSwitcher.tsx for why
+   the two live together. Built from styles/elegance.css; only the pieces unique
+   to this sheet are declared here. */
+
+.usw { width: min(460px, 100%); }
+
+.usw-body { display: flex; flex-direction: column; gap: 18px; }
+
+.usw-section {
+  margin: 0 0 2px;
+  font-size: var(--fs-callout);
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: var(--tracking-tight);
+}
+.usw-section-hint { margin: 0 0 10px; }
+
+.usw-stores, .usw-users { display: flex; flex-direction: column; gap: 6px; }
+
+.usw-store, .usw-user {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 11px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: start;
+  font-family: inherit;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.usw-store:hover:not(:disabled), .usw-user:hover { background: var(--surface-hover); }
+.usw-store:focus-visible, .usw-user:focus-visible { outline: 2px solid var(--accent-ring); outline-offset: 1px; }
+.usw-store:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.usw-store.active, .usw-user.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.usw-store-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--bg-deep);
+  color: var(--text-muted);
+}
+.usw-store.active .usw-store-icon { background: var(--accent); color: var(--text-on-accent); }
+
+/* Same serif monogram as the sidebar avatar — see App.css. */
+.usw-avatar {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--bg-deep);
+  color: var(--text-muted);
+}
+.usw-user.active .usw-avatar { background: var(--text-main); color: var(--surface); }
+
+.usw-store-text, .usw-user-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.usw-store-text strong, .usw-user-text strong {
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.usw-store-text small, .usw-user-text small {
+  font-size: var(--fs-footnote);
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.usw-check { color: var(--accent); flex-shrink: 0; margin-inline-start: auto; }
+.usw-lock { color: var(--text-tertiary); flex-shrink: 0; margin-inline-start: auto; }
+
+.usw-locked-note { margin: 8px 0 0; }
+
+/* --- PIN step --- */
+.usw-pin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  padding: 28px 24px;
+}
+.usw-pin-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.usw-pin-text {
+  margin: 0;
+  font-size: var(--fs-callout);
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 34ch;
+}
+.usw-pin-text strong { color: var(--text-main); }
+
+/* Wide tracking so 4 dots read as 4, not as a smudge. */
+.usw-pin-input {
+  width: 170px;
+  height: 46px;
+  text-align: center;
+  font-size: 22px;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  font-weight: 700;
+}
+
+.usw-pin-actions { display: flex; gap: 10px; margin-top: 4px; }

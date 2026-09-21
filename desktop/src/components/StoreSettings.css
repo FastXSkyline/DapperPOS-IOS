@@ -1,0 +1,383 @@
+/* Magasins · Caisses · Rôles — Elegance palette (src/styles/tokens.css).
+   Lives inside the Settings view, so it starts at the tab strip with no page title. */
+
+.stset {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.stset-tabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 3px;
+    background: var(--bg-deep);
+    border-radius: var(--r-sm);
+    align-self: flex-start;
+}
+
+.stset-tabs button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 15px;
+    border: none;
+    background: transparent;
+    border-radius: var(--r-xs);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.stset-tabs button.active {
+    background: var(--surface);
+    color: var(--accent);
+    box-shadow: var(--shadow-sm);
+}
+
+.stset-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.stset-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.stset-head h3 { margin: 0; font-size: var(--fs-headline); color: var(--text-main); }
+
+.stset-hint {
+    margin: 0;
+    max-width: 76ch;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+}
+
+.stset-device { font-size: var(--fs-small); color: var(--text-muted); }
+.stset-device code {
+    padding: 2px 7px;
+    background: var(--bg-deep);
+    border-radius: var(--r-xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-caption);
+    color: var(--text-main);
+}
+
+/* --- Buttons ------------------------------------------------------------ */
+
+.stset-primary,
+.stset-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 15px;
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.stset-primary { border: none; background: var(--accent); color: var(--text-on-accent); }
+.stset-primary:hover:not(:disabled) { background: var(--accent-hover); }
+.stset-ghost { border: 1px solid var(--border-light); background: var(--surface); color: var(--text-main); }
+.stset-ghost:hover:not(:disabled) { background: var(--surface-hover); }
+.stset-primary:disabled, .stset-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.stset-actions { display: flex; justify-content: flex-end; gap: 9px; }
+
+.stset-error {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 14px;
+    background: var(--error-soft);
+    border: 1px solid var(--error);
+    border-radius: var(--r-sm);
+    color: var(--error);
+    font-size: var(--fs-small);
+    font-weight: 500;
+}
+
+.stset-saved {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--success);
+    font-size: var(--fs-small);
+    font-weight: 600;
+}
+
+/* --- Store form --------------------------------------------------------- */
+
+.stset-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+.stset-form h4 {
+    margin: 4px 0 0;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.stset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.stset-grid label { display: flex; flex-direction: column; gap: 4px; }
+
+.stset-grid span {
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.stset-grid input {
+    padding: 9px 11px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}
+
+.stset-grid input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+/* --- Tables ------------------------------------------------------------- */
+
+.stset-table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
+
+.stset-table th {
+    text-align: left;
+    padding: 9px 12px;
+    font-size: var(--fs-footnote);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-tertiary);
+    border-bottom: 1px solid var(--border-light);
+    white-space: nowrap;
+}
+
+.stset-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--separator);
+    color: var(--text-main);
+}
+
+.stset-table tbody tr:last-child td { border-bottom: none; }
+.stset-table .muted { color: var(--text-muted); }
+.stset-table .mono { font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+
+/* A deactivated store stays listed: its sales and stock movements are still in the
+   history, and hiding it would make those figures come from nowhere. */
+.stset-table tr.inactive td { opacity: 0.5; }
+
+.stset-here {
+    display: inline-block;
+    margin-left: 7px;
+    padding: 1px 7px;
+    border-radius: var(--r-full);
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+}
+
+.stset-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: var(--r-full);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+}
+
+.stset-badge.on { background: var(--success-soft); color: var(--success); }
+.stset-badge.off { background: var(--bg-deep); color: var(--text-muted); }
+
+.stset-row-actions { display: flex; gap: 4px; justify-content: flex-end; }
+
+.stset-row-actions button {
+    display: inline-flex;
+    padding: 6px;
+    border: 1px solid var(--border-light);
+    background: var(--surface);
+    border-radius: var(--r-xs);
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.stset-row-actions button:hover { background: var(--surface-hover); color: var(--text-main); }
+
+/* --- Terminals ---------------------------------------------------------- */
+
+.stset-register {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 10px;
+}
+
+.stset-register-card {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding: 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+.stset-register-card strong { font-size: var(--fs-callout); color: var(--text-main); }
+.stset-register-card > div { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* --- Roles -------------------------------------------------------------- */
+
+.stset-roles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 10px;
+}
+
+.stset-role {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 13px 15px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.stset-role:hover { background: var(--surface-hover); }
+
+.stset-role.active {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.stset-role strong { font-size: var(--fs-callout); color: var(--text-main); }
+.stset-role span { font-size: var(--fs-footnote); color: var(--text-muted); line-height: 1.45; }
+
+.stset-limit {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 14px 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+.stset-limit label { display: flex; flex-direction: column; gap: 5px; }
+.stset-limit label > span { font-size: var(--fs-footnote); font-weight: 600; color: var(--text-muted); }
+.stset-limit label > div { display: flex; align-items: center; gap: 7px; }
+
+.stset-limit input {
+    width: 92px;
+    padding: 9px 11px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-callout);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    color: var(--text-main);
+}
+
+.stset-limit em { font-style: normal; color: var(--text-muted); font-weight: 600; }
+
+.stset-limit p {
+    flex: 1;
+    min-width: 240px;
+    margin: 0;
+    font-size: var(--fs-footnote);
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.stset-perms {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+}
+
+.stset-perms fieldset {
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+}
+
+.stset-perms legend {
+    padding: 0 6px;
+    font-size: var(--fs-footnote);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-tertiary);
+}
+
+.stset-perms label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+    cursor: pointer;
+}
+
+.stset-perms input[type='checkbox'] { accent-color: var(--accent); cursor: pointer; }
+
+.stset-perms label span { flex: 1; }
+
+/* Sensitive actions are labelled, not blocked: the owner may still grant them, but
+   never by accident. */
+.stset-perms em {
+    font-style: normal;
+    padding: 1px 6px;
+    border-radius: var(--r-full);
+    background: var(--warning-soft);
+    color: var(--warning);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+}
+
+@media (max-width: 760px) {
+    .stset-table { display: block; overflow-x: auto; white-space: nowrap; }
+}

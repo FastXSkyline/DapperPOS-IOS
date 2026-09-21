@@ -1,0 +1,193 @@
+.receipt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--scrim, rgba(20, 12, 30, 0.55));
+    backdrop-filter: blur(8px) saturate(var(--lg-saturate));
+    -webkit-backdrop-filter: blur(8px) saturate(var(--lg-saturate));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: var(--space-6);
+}
+
+.receipt-modal {
+    background: var(--lg-regular-bg);
+    backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+    -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+    border: 1px solid var(--lg-border);
+    border-radius: var(--r-2xl);
+    width: 90%;
+    max-width: 420px;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--lg-highlight), var(--shadow-float);
+    overflow: hidden;
+}
+
+.receipt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--separator);
+}
+
+.receipt-header h2 {
+    margin: 0;
+    font-size: var(--fs-title-3, 18px);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-main);
+}
+
+.receipt-content {
+    flex: 1;
+    background: var(--surface-2);
+    padding: var(--space-5);
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Faithful paper preview — kept white, neutral shadow, NOT aurora-ified */
+.preview-frame {
+    background: #ffffff;
+    border-radius: var(--r-sm);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+    width: 100%;
+    max-width: 310px;
+    /* Slightly increased to fit 80mm preview comfortably */
+    min-height: 400px;
+    border: none;
+}
+
+.receipt-actions {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    background: var(--lg-thin-bg, transparent);
+    border-top: 1px solid var(--separator);
+}
+
+.receipt-actions button {
+    flex: 1;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--r-full);
+    font-weight: 600;
+    font-size: var(--fs-body, 14px);
+    cursor: pointer;
+    transition: transform var(--ease-spring), box-shadow var(--ease-out),
+        background var(--ease-out), border-color var(--ease-out);
+}
+
+.receipt-actions button:active {
+    transform: scale(0.97);
+}
+
+.btn-cancel {
+    border: 1px solid var(--border-light);
+    background: var(--surface);
+    color: var(--text-main);
+}
+
+.btn-cancel:hover {
+    background: var(--surface-2);
+    transform: translateY(-2px);
+}
+
+.btn-print {
+    border: 1px solid var(--lg-border);
+    background: var(--accent-grad);
+    color: var(--text-on-accent);
+    box-shadow: var(--shadow-accent);
+}
+
+.btn-print:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-accent), var(--shadow-md);
+}
+
+.btn-invoice {
+    border: 1px solid var(--accent);
+    background: var(--surface);
+    color: var(--accent);
+}
+
+.btn-invoice:hover:not(:disabled) {
+    background: var(--accent-soft, var(--surface-2));
+    transform: translateY(-2px);
+}
+
+.btn-invoice:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    font-size: var(--fs-body, 14px);
+}
+
+/* Success banner */
+.success-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.success-icon {
+    font-size: 24px;
+    color: var(--success);
+}
+
+/* Close button */
+.btn-close {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--lg-border);
+    background: var(--surface-2);
+    border-radius: var(--r-full);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: transform var(--ease-spring), background var(--ease-out),
+        color var(--ease-out);
+}
+
+.btn-close:hover {
+    background: var(--surface);
+    color: var(--text-main);
+    transform: scale(1.06);
+}
+
+.btn-close:active {
+    transform: scale(0.94);
+}
+
+/* Done button */
+.btn-done {
+    border: 1px solid transparent;
+    background: var(--success);
+    color: var(--text-on-accent);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-done:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}

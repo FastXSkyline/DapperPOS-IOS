@@ -1,0 +1,84 @@
+/* Familles d'articles. Built on styles/elegance.css; only the tree's own
+   geometry lives here. */
+
+.cat-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  padding: 18px 20px;
+}
+
+.cat-intro { margin: -6px 0 0; max-width: 68ch; }
+
+.cat-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-light);
+}
+.cat-add > .el-input { flex: 1 1 220px; min-width: 160px; }
+.cat-add-parent { width: 190px; flex-shrink: 0; }
+.cat-add-hint { flex-basis: 100%; margin: 0; }
+
+.cat-tree { display: flex; flex-direction: column; gap: 2px; }
+
+.cat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.cat-row:hover { background: var(--surface-hover); }
+
+.cat-expand {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  border-radius: 6px;
+}
+.cat-expand:hover { background: var(--bg-deep); color: var(--text-main); }
+.cat-expand svg { transition: transform var(--dur-fast) var(--ease-out); }
+.cat-expand svg.is-open { transform: rotate(90deg); }
+[dir="rtl"] .cat-expand svg { transform: rotate(180deg); }
+[dir="rtl"] .cat-expand svg.is-open { transform: rotate(90deg); }
+
+.cat-expand-space { width: 22px; flex-shrink: 0; }
+
+.cat-name {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-callout);
+  font-weight: 600;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cat-rename { flex: 1; min-width: 0; height: 32px; }
+
+/* Actions stay hidden until the row is touched, so a long tree reads as names
+   rather than as a wall of icons. focus-within keeps them for the keyboard. */
+.cat-actions { display: flex; gap: 2px; opacity: 0; transition: opacity var(--dur-fast) var(--ease-out); }
+.cat-row:hover .cat-actions,
+.cat-row:focus-within .cat-actions { opacity: 1; }
+
+.cat-danger:hover { background: var(--error-soft) !important; color: var(--error) !important; }
+
+.cat-children { display: flex; flex-direction: column; gap: 2px; }

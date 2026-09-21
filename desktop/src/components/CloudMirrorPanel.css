@@ -1,0 +1,145 @@
+/* Miroir central — Elegance palette (src/styles/tokens.css). */
+
+.cmp {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.cmp-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.cmp-head h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: var(--fs-headline);
+    color: var(--text-main);
+}
+
+.cmp-head svg { color: var(--accent); }
+
+.cmp-badge {
+    padding: 3px 10px;
+    border-radius: var(--r-full);
+    font-size: var(--fs-caption);
+    font-weight: 700;
+}
+
+.cmp-badge.on { background: var(--success-soft); color: var(--success); }
+.cmp-badge.off { background: var(--bg-deep); color: var(--text-muted); }
+
+.cmp-note {
+    margin: 0;
+    max-width: 78ch;
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.cmp-note strong { color: var(--text-main); }
+
+.cmp-form { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+.cmp-form label { display: flex; flex-direction: column; gap: 4px; min-width: 170px; }
+.cmp-form label.grow { flex: 1; min-width: 260px; }
+
+.cmp-form span {
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.cmp-form em { font-style: normal; color: var(--success); }
+
+.cmp-form input[type='text'],
+.cmp-form input[type='password'],
+.cmp-form input:not([type]) {
+    padding: 8px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--text-main);
+}
+
+.cmp-form input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.cmp-check { flex-direction: row !important; align-items: center; gap: 7px !important; min-width: 0 !important; }
+.cmp-check input { accent-color: var(--accent); cursor: pointer; }
+.cmp-check span { font-size: var(--fs-small) !important; color: var(--text-main) !important; }
+
+.cmp-actions { display: flex; gap: 9px; justify-content: flex-end; flex-wrap: wrap; }
+
+.cmp-primary,
+.cmp-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 15px;
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.cmp-primary { border: none; background: var(--accent); color: var(--text-on-accent); }
+.cmp-primary:hover:not(:disabled) { background: var(--accent-hover); }
+.cmp-ghost { border: 1px solid var(--border-light); background: var(--surface); color: var(--text-main); }
+.cmp-ghost:hover:not(:disabled) { background: var(--surface-hover); }
+.cmp-primary:disabled, .cmp-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.cmp-msg {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    font-size: var(--fs-small);
+    font-weight: 600;
+}
+
+.cmp-msg.ok { color: var(--success); }
+.cmp-msg.bad { color: var(--error); }
+
+.cmp-table { width: 100%; border-collapse: collapse; font-size: var(--fs-footnote); }
+
+.cmp-table th {
+    text-align: left;
+    padding: 8px 10px;
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-tertiary);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.cmp-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--separator);
+    color: var(--text-main);
+}
+
+.cmp-table tbody tr:last-child td { border-bottom: none; }
+.cmp-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.cmp-table .muted { color: var(--text-muted); }
+
+/* A backlog is the signal that something is wrong; zero waiting is a calm shop. */
+.cmp-table .waiting { color: var(--warning); font-weight: 700; }
+.cmp-err { color: var(--error); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

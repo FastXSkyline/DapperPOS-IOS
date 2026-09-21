@@ -1,0 +1,23 @@
+# gitleaks config (Phase 6.6) — secret scanning for the GestionPOS repo.
+# The historically-committed OpenAI key is COMPROMISED and must be rotated by the
+# owner (task 1.6). .env files are gitignored and hold the runtime key.
+title = "GestionPOS gitleaks"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "openai-key"
+description = "OpenAI API key"
+regex = '''sk-[A-Za-z0-9_-]{20,}'''
+keywords = ["sk-"]
+
+[allowlist]
+description = "Non-secret paths"
+paths = [
+  '''(.*?)(png|jpg|jpeg|gif|svg|ico)$''',
+  '''node_modules/''',
+  '''release/''',
+  '''dist/''',
+  '''dist-electron/''',
+]

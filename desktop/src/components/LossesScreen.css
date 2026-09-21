@@ -1,0 +1,241 @@
+/* Pertes / shrinkage (Dapper Phase 3) */
+
+.loss-screen {
+    padding: 24px 28px;
+    overflow-y: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.loss-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.loss-header h1 {
+    margin: 0;
+    font-size: 1.6rem;
+}
+
+.loss-header p {
+    margin: 4px 0 0;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+}
+
+.loss-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    border: none;
+    background: var(--accent-grad, var(--accent));
+    color: var(--text-on-accent);
+    border-radius: var(--r-sm, 8px);
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.loss-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.loss-cancel {
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm, 8px);
+    color: inherit;
+    cursor: pointer;
+}
+
+.loss-error {
+    padding: 10px 14px;
+    border-radius: var(--r-sm, 8px);
+    background: var(--error-soft, var(--surface-2));
+    border: 1px solid var(--error);
+    color: var(--error);
+    font-size: 0.88rem;
+}
+
+.loss-card {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-2xl, 16px);
+    padding: 20px;
+}
+
+.loss-card h3 {
+    margin: 0 0 14px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.loss-hint {
+    margin: 10px 0 0;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+/* --- Summary tiles --- */
+
+.loss-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.loss-tile {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-2xl, 16px);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.loss-tile span {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.loss-tile strong {
+    font-size: 1.15rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.loss-tile small {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+}
+
+.loss-tile.total {
+    border-color: var(--error);
+}
+
+.loss-tile.total strong {
+    color: var(--error);
+    font-size: 1.4rem;
+}
+
+/* --- Form --- */
+
+.loss-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.loss-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.loss-form label span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.loss-form input,
+.loss-form select {
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-sm, 8px);
+    color: inherit;
+    font-size: 0.92rem;
+}
+
+.loss-form input:focus,
+.loss-form select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.loss-notes {
+    margin-bottom: 14px;
+}
+
+.loss-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* --- Table --- */
+
+.loss-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+}
+
+.loss-table th,
+.loss-table td {
+    text-align: left;
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--separator, var(--border-light));
+}
+
+.loss-table th {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.loss-table td.num {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.loss-table td.note {
+    color: var(--text-muted);
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.loss-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: var(--r-full, 999px);
+    font-size: 0.74rem;
+    font-weight: 600;
+    background: var(--surface-2);
+    border: 1px solid var(--border-light);
+    white-space: nowrap;
+}
+
+.loss-badge.theft {
+    border-color: var(--error);
+    color: var(--error);
+}
+
+.loss-undo {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+}
+
+.loss-undo:hover {
+    color: var(--accent);
+}
