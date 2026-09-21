@@ -101,14 +101,26 @@ jobs:
         if: failure()
         run: |
           cd "$GITHUB_WORKSPACE"
-          if [ -f pod-install.log ] || [ -f xcodebuild.log ]; then
-            git config user.email "ci@local"
-            git config user.name "ci-logger"
-            git checkout -B ci-logs
-            mkdir -p logs
-            [ -f pod-install.log ] && cp pod-install.log "logs/run-${GITHUB_RUN_NUMBER}-pod.log"
-            [ -f xcodebuild.log ] && cp xcodebuild.log "logs/run-${GITHUB_RUN_NUMBER}-xcodebuild.log"
-            git add logs
+          git config user.email "ci@local"
+          git config user.name "ci-logger"
+          git checkout -B ci-logs
+          mkdir -p logs
+          [ -f pod-install.log ] && cp pod-install.log "logs/run-${GITHUB_RUN_NUMBER}-pod.log"
+          [ -f xcodebuild.log ] && cp xcodebuild.log "logs/run-${GITHUB_RUN_NUMBER}-xcodebuild.log"
+          git add -A -f logs
+          if git diff --cached --quiet; then
+            echo "No captured logs to publish"
+          else
             git commit -m "ci logs: run ${GITHUB_RUN_NUMBER}"
             git push origin ci-logs --force
           fi
+
+      - name: Upload debug logs as artifact (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-debug-logs-run-${{ github.run_number }}
+          path: |
+            pod-install.log
+            xcodebuild.log
+          if-no-files-found: ignore
