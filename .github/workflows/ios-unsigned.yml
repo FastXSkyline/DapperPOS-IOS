@@ -9,6 +9,9 @@ on:
   push:
     branches: [main, master]
 
+permissions:
+  contents: write
+
 jobs:
   build-unsigned-ipa:
     runs-on: macos-14
@@ -32,12 +35,13 @@ jobs:
 
       - name: Install CocoaPods dependencies
         run: |
+          set -o pipefail
           if ! command -v pod >/dev/null 2>&1; then
             echo "pod not on runner image — installing via Homebrew"
             brew install cocoapods
           fi
           cd ios
-          pod install --repo-update
+          pod install --repo-update 2>&1 | tee "$GITHUB_WORKSPACE/pod-install.log"
 
       - name: Detect workspace and scheme
         id: detect
@@ -53,6 +57,7 @@ jobs:
 
       - name: Compile (code signing disabled)
         run: |
+          set -o pipefail
           cd ios
           xcodebuild \
             -workspace "${{ steps.detect.outputs.workspace }}" \
@@ -63,7 +68,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            build
+            build 2>&1 | tee "$GITHUB_WORKSPACE/xcodebuild.log"
 
       - name: Package unsigned .ipa
         run: |
@@ -81,3 +86,29 @@ jobs:
           name: DapperPOS-unsigned-ipa
           path: mobile/ios/DapperPOS-unsigned.ipa
           if-no-files-found: error
+
+      - name: Attach .ipa to GitHub Release (on success)
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ipa-v${{ github.run_number }}
+          name: "Unsigned IPA — run ${{ github.run_number }}"
+          body: "Unsigned iOS build of commit ${{ github.sha }} — install via Sideloadly/AltStore or any signing tool."
+          files: mobile/ios/DapperPOS-unsigned.ipa
+          fail_on_unmatched_files: true
+
+      - name: Push debug log to ci-logs branch (on failure)
+        if: failure()
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          if [ -f pod-install.log ] || [ -f xcodebuild.log ]; then
+            git config user.email "ci@local"
+            git config user.name "ci-logger"
+            git checkout -B ci-logs
+            mkdir -p logs
+            [ -f pod-install.log ] && cp pod-install.log "logs/run-${GITHUB_RUN_NUMBER}-pod.log"
+            [ -f xcodebuild.log ] && cp xcodebuild.log "logs/run-${GITHUB_RUN_NUMBER}-xcodebuild.log"
+            git add logs
+            git commit -m "ci logs: run ${GITHUB_RUN_NUMBER}"
+            git push origin ci-logs --force
+          fi
