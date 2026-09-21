@@ -32,6 +32,10 @@ jobs:
 
       - name: Install CocoaPods dependencies
         run: |
+          if ! command -v pod >/dev/null 2>&1; then
+            echo "pod not on runner image — installing via Homebrew"
+            brew install cocoapods
+          fi
           cd ios
           pod install --repo-update
 
