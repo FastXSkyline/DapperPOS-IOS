@@ -30,6 +30,11 @@ jobs:
       - name: Generate native iOS project (expo prebuild)
         run: npx expo prebuild --platform ios --clean
 
+      - name: Install CocoaPods dependencies
+        run: |
+          cd ios
+          pod install --repo-update
+
       - name: Detect workspace and scheme
         id: detect
         run: |
